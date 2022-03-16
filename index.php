@@ -5,12 +5,16 @@
 <body>
 
 <div class="split left">
-  <div class="centered">
+  <div class="top">
     <img src="Donny.webp" alt="Profile Picture">
     <h2>Jane Flex</h2>
     <p>This is the profile</p>
   </div>
 </div>
+
+
+
+
 
 <div class="split right">
   <div class="topnav">
@@ -19,7 +23,7 @@
     <a href="update.php">About Me</a>
   </div>
 
-  <div class="centered">
+  <div class="centre">
     <h2>This is the artefacts</h2>
     <p>Some text here too.</p>
   </div>
