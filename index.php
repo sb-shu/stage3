@@ -13,6 +13,12 @@
 </div>
 
 <div class="split right">
+  <div class="topnav">
+    <a class="active" href="index.php">Artefacts</a>
+    <a href="register.php">Work</a>
+    <a href="update.php">About Me</a>
+  </div>
+
   <div class="centered">
     <h2>This is the artefacts</h2>
     <p>Some text here too.</p>
