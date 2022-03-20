@@ -1,9 +1,15 @@
 <!--
     Edited by: James Burdett
-    Last edited: 17/03/2022
+    Last edited: 20/03/2022
 -->
 
 <?php
+
+// Constants
+
+define("SQLPATH", "./database.db");
+
+// Classes
 
 // Class that holds data for a file that can be shown on a user's profile.
 class PortfolioArtefact{
@@ -95,6 +101,22 @@ function SetUser($userAccount){
 // Returns: void
 function DeleteUser($userAccountID){
     // TODO : Delete from database.
+}
+
+// Compares a user's password.
+// Returns: bool
+function UserComparePassword($username, $password){
+    $db = new SQLite3(SQLPATH);
+    
+    $statement = $db->prepare("SELECT PasswordHash FROM UserAccounts WHERE Username = :username");
+    $statement->bindParam(":username", $username);
+    $statement->execute();
+    $result = $statement->fetch();
+    var_dump($result);
+    // TODO: Test this bit and finish.
+    return true;
+
+    //return password_verify($password, $passwordHash);
 }
 
 ?>
