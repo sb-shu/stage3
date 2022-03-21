@@ -1,3 +1,8 @@
+<?php
+  // Include methods for database usage.
+  include_once("DatabaseInterface.php")
+?>
+
 <html>
 <head>
   <link rel="stylesheet" href="style.css" />
@@ -28,6 +33,5 @@
     <p>Some text here too.</p>
   </div>
 </div>
-
 </body>
 </html>
