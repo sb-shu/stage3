@@ -17,6 +17,7 @@ class PortfolioArtefact{
     public $ThumbnailLink; // String
     // Link to the file, such as a pdf, png, or any other extension.
     public $FileLink; // String
+    public $Tags; // String[]
 }
 
 // Class that holds data about a person's past work experience.
@@ -35,6 +36,7 @@ class UserAccount{
     public $LastName; // String
     public $ProfilePictureLink; // String
     public $AboutMe; // String
+    public $Contacts; // String[]
 
     // Returns: String[]
     function GetEducation(){
@@ -69,7 +71,8 @@ function InitializeDatabase(){
         FirstName TEXT,
         LastName TEXT,
         ProfilePictureLink TEXT,
-        AboutMeText TEXT
+        AboutMeText TEXT,
+        Contacts Text
         )'
         );
     // Create EducationInstitutions Table
@@ -92,7 +95,8 @@ function InitializeDatabase(){
         ID INTEGER PRIMARY KEY AUTOINCREMENT,
         Username TEXT,
         ThumbnailLink TEXT,
-        FileLink TEXT
+        FileLink TEXT,
+        Tags TEXT
         )'
         );
     // Create PortfolioWorkExperiences Table
