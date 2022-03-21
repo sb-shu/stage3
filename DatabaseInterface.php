@@ -18,6 +18,12 @@ class PortfolioArtefact{
     // Link to the file, such as a pdf, png, or any other extension.
     public $FileLink; // String
     public $Tags; // String[]
+
+    // Saves changes to this object to database.
+    // Returns: void
+    function SaveChanges(){
+        // TODO: Write fields to database.
+    }
 }
 
 // Class that holds data about a person's past work experience.
@@ -27,6 +33,12 @@ class PortfolioWorkExperience{
     public $EndDate; // Date
     public $JobTitle; // String
     public $Description; // String
+
+    // Saves changes to this object to database.
+    // Returns: void
+    function SaveChanges(){
+        // TODO: Write fields to database.
+    }
 }
 
 // Class that holds all publicly accessable data regarding a user, including name, portfolio items, and more.
@@ -56,6 +68,12 @@ class UserAccount{
     // Returns: PortfolioArtefact[]
     function GetArtefacts(){
         // TODO: Fetch from DB.
+    }
+
+    // Saves changes to this object to database.
+    // Returns: void
+    function SaveChanges(){
+        // TODO: Write fields to database.
     }
 }
 
@@ -134,12 +152,6 @@ function GetArtefact($artefactID){
     // TODO: Get from database.
 }
 
-// Sets an artefact entry in the database. The key is provided within the object.
-// Returns: void
-function SetArtefact($artefact){
-    // TODO: Set in database.
-}
-
 // Deletes an artefact from the database with a given id.
 // Returns: void
 function DeleteArtefact($artefactID){
@@ -152,12 +164,6 @@ function DeleteArtefact($artefactID){
 // Return: PortfolioWorkExperience
 function GetWorkExperience($workExperienceID){
     // TODO: Get from database.
-}
-
-// Sets a work experience entry in the database. The key is provided within the object.
-// Returns: void
-function SetWorkExperience($workExperience){
-    // TODO: Set in database.
 }
 
 // Deletes a work experience entry from the database with a given id.
@@ -176,6 +182,7 @@ function CreateUser($desiredUsername, $password){
 
     // If requirements are met, create and return true.
     $db = new SQLite3(SQLPATH);
+
     $statement = $db->prepare("INSERT INTO UserAccounts (Username, PasswordHash) VALUES (:username, :passwordHash)");
     $statement->bindParam(":username", $desiredUsername);
     $hash = password_hash($password, PASSWORD_DEFAULT);
@@ -187,18 +194,24 @@ function CreateUser($desiredUsername, $password){
 // Gets a user from the database with a given username.
 // Returns: UserAccount
 function GetUser($username){
-    // TODO: Get from database.
+    $statement = $db->prepare("SELECT FirstName, LastName, Contacts, ProfilePictureLink, AboutMeText FROM UserAccounts WHERE Username = :username");
+    $statement->bindParam(":username", $desiredUsername);
+    $result = $statement->execute()->fetchArray(SQLITE3_ASSOC);
+
+    // TODO: If not found return null
+
+    $userObject = new UserAccount();
+    $userObject->Username = $username;
+    $userObject->FirstName = $result["FirstName"];
+    $userObject->LastName = $result["LastName"];
+    $userObject->ProfilePictureLink = $result["ProfilePictureLink"];
+    $userObject->AboutMe = $result["AboutMeText"];
+    $userObject->Contacts = explode("\0",$result["Contacts"]);
 }
 
-// Sets a user in the database. The key is provided within the object.
+// Deletes a user from the database with a given username.
 // Returns: void
-function SetUser($userAccount){
-    // TODO: Set in database.
-}
-
-// Deletes a user from the database with a given id.
-// Returns: void
-function DeleteUser($userAccountID){
+function DeleteUser($username){
     // TODO : Delete from database.
 }
 
