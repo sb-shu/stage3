@@ -213,11 +213,15 @@ function CreateUser($desiredUsername, $password){
 // Gets a user from the database with a given username.
 // Returns: UserAccount
 function GetUser($username){
+    $db = new SQLite3(SQLPATH);
+
     $statement = $db->prepare("SELECT FirstName, LastName, Contacts, ProfilePictureLink, AboutMeText FROM UserAccounts WHERE Username = :username");
-    $statement->bindParam(":username", $desiredUsername);
+    $statement->bindParam(":username", $username);
     $result = $statement->execute()->fetchArray(SQLITE3_ASSOC);
 
-    // TODO: If not found return null
+    if ($result === false) {
+        return null;
+    }
 
     $userObject = new UserAccount();
     $userObject->Username = $username;
@@ -226,6 +230,8 @@ function GetUser($username){
     $userObject->ProfilePictureLink = $result["ProfilePictureLink"];
     $userObject->AboutMe = $result["AboutMeText"];
     $userObject->Contacts = explode("\0",$result["Contacts"]);
+
+    return $userObject;
 }
 
 // Deletes a user from the database with a given username.
@@ -242,6 +248,10 @@ function UserComparePassword($username, $password){
     $statement = $db->prepare("SELECT PasswordHash FROM UserAccounts WHERE Username = :username");
     $statement->bindParam(':username', $username);
     $result = $statement->execute()->fetchArray(SQLITE3_ASSOC);
+
+    if ($result === false) {
+        return false;
+    }
     
     return password_verify($password, $result["PasswordHash"]);
 }
