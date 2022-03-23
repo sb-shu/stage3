@@ -156,6 +156,19 @@ function GetArtefact($artefactID){
     $artefact->ThumbnailLink = "";
     $artefact->Tags = ["Year1"];
     return $artefact;
+    
+    $statement = $db->prepare("SELECT ThumbnailLink, FileLink, Tags FROM UserAccounts WHERE ID = :id");
+    $statement->bindParam(":id", $artefactID);
+    $result = $statement->execute()->fetchArray(SQLITE3_ASSOC);
+
+    // TODO: If not found return null
+
+    $artefact = new UserAccount();
+    $artefact->ID = $artefactID;
+    $artefact->FileLink = $result["FileLink"];
+    $artefact->ThumbnailLink = $result["ThumbnailLink"];
+    $artefact->Tags = explode("\0",$result["Tags"]);
+    return $artefact;
 }
 
 // Deletes an artefact from the database with a given id.
