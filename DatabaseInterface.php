@@ -154,7 +154,7 @@ function GetArtefact($artefactID){
     $artefact->ID = $artefactID;
     $artefact->FileLink = "";
     $artefact->ThumbnailLink = "";
-    $artefact->Tags = ["Year1"];
+    $artefact->Tags = ["Year1","University"];
     return $artefact;
     
     $statement = $db->prepare("SELECT ThumbnailLink, FileLink, Tags FROM UserAccounts WHERE ID = :id");
