@@ -149,7 +149,13 @@ function InitializeDatabase(){
 // Gets an artefact from the database with a given id.
 // Returns: PortfolioArtefact
 function GetArtefact($artefactID){
-    // TODO: Get from database.
+    // Temporary code
+    $artefact = new PortfolioArtefact();
+    $artefact->ID = $artefactID;
+    $artefact->FileLink = "";
+    $artefact->ThumbnailLink = "";
+    $artefact->Tags = ["Year1"];
+    return $artefact;
 }
 
 // Deletes an artefact from the database with a given id.
