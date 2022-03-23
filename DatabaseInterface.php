@@ -5,14 +5,19 @@
 
 <?php
 
-// Constants
+/* #region Constants */
 
 define("SQLPATH", "./database.sqlite");
-// Classes
+
+/* #endregion */
+
+/* #region Classes */
 
 // Class that holds data for a file that can be shown on a user's profile.
 class PortfolioArtefact{
-    public $ID; // Int
+    private $ID; // Int
+    public $Title;
+    public $Description;
     // Link to a thumbnail image to display.
     public $ThumbnailLink; // String
     // Link to the file, such as a pdf, png, or any other extension.
@@ -20,7 +25,6 @@ class PortfolioArtefact{
     public $Tags; // String[]
 
     // Saves changes to this object to database.
-    // Returns: void
     function SaveChanges(){
         // TODO: Write fields to database.
     }
@@ -28,14 +32,13 @@ class PortfolioArtefact{
 
 // Class that holds data about a person's past work experience.
 class PortfolioWorkExperience{
-    public $ID; // Int
+    private $ID; // Int
     public $StartDate; // Date
     public $EndDate; // Date
     public $JobTitle; // String
     public $Description; // String
 
     // Saves changes to this object to database.
-    // Returns: void
     function SaveChanges(){
         // TODO: Write fields to database.
     }
@@ -43,42 +46,120 @@ class PortfolioWorkExperience{
 
 // Class that holds all publicly accessable data regarding a user, including name, portfolio items, and more.
 class UserAccount{
-    public $Username; // String
+    private $Username; // String
     public $FirstName; // String
     public $LastName; // String
     public $ProfilePictureLink; // String
     public $AboutMe; // String
     public $Contacts; // String[]
 
-    // Returns: String[]
     function GetEducation(){
         // TODO: Fetch from DB.
     }
 
-    // Returns: String[]
     function GetJobTitles(){
         // TODO: Fetch from DB.
     }
 
-    // Returns: PortfolioWorkExperience[]
     function GetWorkExperience(){
         // TODO: Fetch from DB.
     }
 
-    // Returns: PortfolioArtefact[]
+    function AddNewArtefact() : PortfolioArtefact{
+        $db = new SQLite3(SQLPATH);
+        $statement = $db->prepare("INSERT INTO PortfolioArtefacts (Username) VALUES (:username)");
+        $statement->bindParam(":username", $this->Username);
+        var_dump($statement->getSQL());
+        $statement->execute();
+        var_dump($db->lastInsertRowid());
+
+        return GetArtefact($db->lastInsertRowid());
+    }
+
     function GetArtefacts(){
         // TODO: Fetch from DB.
     }
 
     // Saves changes to this object to database.
-    // Returns: void
     function SaveChanges(){
         // TODO: Write fields to database.
     }
 }
 
+/* #endregion */
+
+/* #region User Functions */
+
+// Creates a UserAccount. Returns true if successful.
+function CreateUser($desiredUsername, $password) : bool{
+    $db = new SQLite3(SQLPATH);
+
+    // Check if username already exists...
+    $statement = $db->prepare("SELECT Username FROM UserAccounts WHERE Username = :username");
+    $statement->bindParam(":username", $desiredUsername);
+    $result = $statement->execute()->fetchArray();
+    if($result)
+        return false;
+
+    // If requirements are met, create and return true.
+
+    $statement = $db->prepare("INSERT INTO UserAccounts (Username, PasswordHash) VALUES (:username, :passwordHash)");
+    $statement->bindParam(":username", $desiredUsername);
+    $hash = password_hash($password, PASSWORD_DEFAULT);
+    $statement->bindParam(":passwordHash", $hash);
+    $statement->execute();
+    return true;
+}
+
+// Gets a user from the database with a given username.
+function GetUser($username) : UserAccount{
+    $db = new SQLite3(SQLPATH);
+
+    $statement = $db->prepare("SELECT FirstName, LastName, Contacts, ProfilePictureLink, AboutMeText FROM UserAccounts WHERE Username = :username");
+    $statement->bindParam(":username", $username);
+    $result = $statement->execute()->fetchArray(SQLITE3_ASSOC);
+
+    // If query returns empty, return.
+    if (!$result) {
+        return null;
+    }
+
+    $userObject = new UserAccount();
+    $userObject->Username = $username;
+    $userObject->FirstName = $result["FirstName"];
+    $userObject->LastName = $result["LastName"];
+    $userObject->ProfilePictureLink = $result["ProfilePictureLink"];
+    $userObject->AboutMe = $result["AboutMeText"];
+    $userObject->Contacts = explode("\0",$result["Contacts"]);
+
+    return $userObject;
+}
+
+// Deletes a user from the database with a given username.
+function DeleteUser($username){
+    // TODO : Delete from database.
+}
+
+// Compares a user's password. Returns true if the passwords match.
+function UserComparePassword($username, $password):bool{
+    $db = new SQLite3(SQLPATH);
+
+    $statement = $db->prepare("SELECT PasswordHash FROM UserAccounts WHERE Username = :username");
+    $statement->bindParam(':username', $username);
+    $result = $statement->execute();
+
+    // If query returns empty, return.
+    if (!$result) {
+        return false;
+    }
+    
+    return password_verify($password, $result["PasswordHash"]);
+}
+
+/* #endregion */
+
+
 // Initializes tables
-// Returns: void
 function InitializeDatabase(){
     $db = new SQLite3(SQLPATH);
     // Create UserAccounts table
@@ -144,118 +225,14 @@ function InitializeDatabase(){
         );
 }
 
-// === Artefact functions ===
-
-// Gets an artefact from the database with a given id.
-// Returns: PortfolioArtefact
-function GetArtefact($artefactID){
-    // Temporary code
-    $artefact = new PortfolioArtefact();
-    $artefact->ID = $artefactID;
-    $artefact->FileLink = "";
-    $artefact->ThumbnailLink = "";
-    $artefact->Tags = ["Year1","University"];
-    return $artefact;
-    
-    $statement = $db->prepare("SELECT ThumbnailLink, FileLink, Tags FROM UserAccounts WHERE ID = :id");
-    $statement->bindParam(":id", $artefactID);
-    $result = $statement->execute()->fetchArray(SQLITE3_ASSOC);
-
-    // TODO: If not found return null
-
-    $artefact = new UserAccount();
-    $artefact->ID = $artefactID;
-    $artefact->FileLink = $result["FileLink"];
-    $artefact->ThumbnailLink = $result["ThumbnailLink"];
-    $artefact->Tags = explode("\0",$result["Tags"]);
-    return $artefact;
-}
-
-// Deletes an artefact from the database with a given id.
-// Returns: void
-function DeleteArtefact($artefactID){
-    // TODO: Delete from database.
-}
-
-// === Work Experience functions ===
-
-// Gets a work experience entry from the database with a given id.
-// Return: PortfolioWorkExperience
-function GetWorkExperience($workExperienceID){
-    // TODO: Get from database.
-}
-
-// Deletes a work experience entry from the database with a given id.
-// Returns: void
-function DeleteWorkExperience($workExperienceID){
-    // TODO: Delete from database.
-}
-
-// === User functions ===
-
-// Creates a UserAccount. Returns true if successful.
-// Returns: Bool
-function CreateUser($desiredUsername, $password){
-    // If username already exists or password is not complex enough, return false
-    // TODO: the logic for that.
-
-    // If requirements are met, create and return true.
-    $db = new SQLite3(SQLPATH);
-
-    $statement = $db->prepare("INSERT INTO UserAccounts (Username, PasswordHash) VALUES (:username, :passwordHash)");
-    $statement->bindParam(":username", $desiredUsername);
-    $hash = password_hash($password, PASSWORD_DEFAULT);
-    $statement->bindParam(":passwordHash", $hash);
-    $statement->execute();
-    return True;
-}
-
-// Gets a user from the database with a given username.
-// Returns: UserAccount
-function GetUser($username){
-    $db = new SQLite3(SQLPATH);
-
-    $statement = $db->prepare("SELECT FirstName, LastName, Contacts, ProfilePictureLink, AboutMeText FROM UserAccounts WHERE Username = :username");
-    $statement->bindParam(":username", $username);
-    $result = $statement->execute()->fetchArray(SQLITE3_ASSOC);
-
-    if ($result === false) {
-        return null;
-    }
-
-    $userObject = new UserAccount();
-    $userObject->Username = $username;
-    $userObject->FirstName = $result["FirstName"];
-    $userObject->LastName = $result["LastName"];
-    $userObject->ProfilePictureLink = $result["ProfilePictureLink"];
-    $userObject->AboutMe = $result["AboutMeText"];
-    $userObject->Contacts = explode("\0",$result["Contacts"]);
-
-    return $userObject;
-}
-
-// Deletes a user from the database with a given username.
-// Returns: void
-function DeleteUser($username){
-    // TODO : Delete from database.
-}
-
-// Compares a user's password. Returns true if the passwords match.
-// Returns: bool
-function UserComparePassword($username, $password){
-    $db = new SQLite3(SQLPATH);
-
-    $statement = $db->prepare("SELECT PasswordHash FROM UserAccounts WHERE Username = :username");
-    $statement->bindParam(':username', $username);
-    $result = $statement->execute()->fetchArray(SQLITE3_ASSOC);
-
-    if ($result === false) {
-        return false;
-    }
-    
-    return password_verify($password, $result["PasswordHash"]);
-}
-
-// Temporary call to initialize the database.
+// Call to initialize the database.
 InitializeDatabase();
+
+// Create a testing account.
+if(CreateUser("testuser", "pass")){
+    $user = GetUser("testuser");
+    for($i = 0; $i < 5; $i++){
+        $artefact = $user->AddNewArtefact();
+    }
+}
 ?>
