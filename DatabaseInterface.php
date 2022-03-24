@@ -1,12 +1,9 @@
-<!--
-    Last edited: 23/03/2022
--->
-
 <?php
 
 /* #region Constants */
 
 define("SQLPATH", "./database.sqlite");
+define("ARRAYSEPERATOR","\n");
 
 /* #endregion */
 
@@ -32,16 +29,10 @@ class PortfolioArtefact{
         // TODO: Create the artefact in the database.
     }
 
-    static function GetArtefact($artefactID) : ?PortfolioArtefact {
-        // Temporary code
-        $artefact = new PortfolioArtefact();
-        $artefact->ID = $artefactID;
-        $artefact->FileLink = "";
-        $artefact->ThumbnailLink = "";
-        $artefact->Tags = ["Year1","University"];
-        return $artefact;
-    
-        $statement = $db->prepare("SELECT ThumbnailLink, FileLink, Tags FROM UserAccounts WHERE ID = :id");
+    static function GetArtefact($artefactID) : ?PortfolioArtefact {  
+        $db = new SQLite3(SQLPATH);
+
+        $statement = $db->prepare("SELECT Title, Description, ThumbnailLink, FileLink, Tags FROM PortfolioArtefacts WHERE ID = :id");
         $statement->bindParam(":id", $artefactID);
         $result = $statement->execute()->fetchArray(SQLITE3_ASSOC);
     
@@ -50,17 +41,35 @@ class PortfolioArtefact{
             return null;
         }
     
-        $artefact = new UserAccount();
+        $artefact = new PortfolioArtefact();
         $artefact->ID = $artefactID;
+        $artefact->Title = $result["Title"];
+        $artefact->Description = $result["Description"];
         $artefact->FileLink = $result["FileLink"];
         $artefact->ThumbnailLink = $result["ThumbnailLink"];
-        $artefact->Tags = explode("\0",$result["Tags"]);
+        $artefact->Tags = explode(ARRAYSEPERATOR,$result["Tags"]);
         return $artefact;
     }
 
     // Saves changes to this object to database.
     function SaveChanges(){
-        // TODO: Write fields to database.
+        $db = new SQLite3(SQLPATH);
+        $statement = $db->prepare("UPDATE PortfolioArtefacts SET
+        Title = :title,
+        Description = :description,
+        ThumbnailLink = :thumbnailLink,
+        FileLink = :fileLink,
+        Tags = :tags
+        WHERE ID = :id");
+        $statement->bindParam(":id", $this->ID);
+
+        $statement->bindParam(":title", $this->Title);
+        $statement->bindParam(":description", $this->Description);
+        $statement->bindParam(":thumbnailLink", $this->ThumbnailLink);
+        $statement->bindParam(":fileLink", $this->FileLink);
+        $statement->bindParam(":tags", implode(ARRAYSEPERATOR,$this->Tags));
+
+        $statement->execute();
     }
 
     /* #endregion */
@@ -137,14 +146,30 @@ class UserAccount{
         $userObject->LastName = $result["LastName"];
         $userObject->ProfilePictureLink = $result["ProfilePictureLink"];
         $userObject->AboutMe = $result["AboutMeText"];
-        $userObject->Contacts = explode("\0",$result["Contacts"]);
+        $userObject->Contacts = explode(ARRAYSEPERATOR,$result["Contacts"]);
 
         return $userObject;
     }
 
     // Saves changes to this object to database.
     function SaveChanges(){
-        // TODO: Write fields to database.
+        $db = new SQLite3(SQLPATH);
+        $statement = $db->prepare("UPDATE UserAccounts SET 
+        FirstName = :firstName,
+        LastName = :lastName,
+        ProfilePictureLink = :profilePictureLink,
+        AboutMeText = :aboutMeText,
+        Contacts = :contacts
+        WHERE Username = :username");
+        $statement->bindParam(":username", $this->Username);
+
+        $statement->bindParam(":firstName", $this->FirstName);
+        $statement->bindParam(":lastName", $this->LastName);
+        $statement->bindParam(":profilePictureLink", $this->ProfilePictureLink);
+        $statement->bindParam(":aboutMeText", $this->AboutMeText);
+        $statement->bindParam(":contacts", implode(ARRAYSEPERATOR,$this->Contacts));
+
+        $statement->execute();
     }
 
     /* #endregion */
@@ -268,6 +293,8 @@ function InitializeDatabase(){
     $db->exec(
         'CREATE TABLE IF NOT EXISTS PortfolioArtefacts (
         ID INTEGER PRIMARY KEY AUTOINCREMENT,
+        Title TEXT,
+        Description TEXT,
         Username TEXT,
         ThumbnailLink TEXT,
         FileLink TEXT,
@@ -307,11 +334,29 @@ InitializeDatabase();
 // Create a testing account.
 $newAccount = CreateUser("testuser", "pass");
 if($newAccount){
+    // Set new account details...
+    $newAccount->FirstName = "Test";
+    $newAccount->LastName = "Testington";
+    $newAccount->ProfilePictureLink = "https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.thetimes.co.uk%2Farticle%2Frick-astley-the-internet-s-oldest-joke-is-having-the-last-laugh-kwksbq757&psig=AOvVaw2ENgG_QGvmQTUzZ9zN1FJu&ust=1648216198875000&source=images&cd=vfe&ved=0CAsQjRxqFwoTCOCqt_nx3vYCFQAAAAAdAAAAABAD";
+    $newAccount->AboutMeText = "I am a music person.";
+    $newAccount->Contacts = ["Youtube: some link", "Github: Some link"];
+
+    // Save the changes made.
+    $newAccount->SaveChanges();
+
+    // Add artefacts...
     for($i = 0; $i < 5; $i++){
         $artefact = $newAccount->AddNewArtefact();
+        $artefact->Title = "Artefact ".$i+1;
+        $artefact->Description = "This is artefact number ".($i+1).".";
+        $artefact->ThumbnailLink = "https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.thetimes.co.uk%2Farticle%2Frick-astley-the-internet-s-oldest-joke-is-having-the-last-laugh-kwksbq757&psig=AOvVaw2ENgG_QGvmQTUzZ9zN1FJu&ust=1648216198875000&source=images&cd=vfe&ved=0CAsQjRxqFwoTCOCqt_nx3vYCFQAAAAAdAAAAABAD";
+        $artefact->FileLink = "https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.thetimes.co.uk%2Farticle%2Frick-astley-the-internet-s-oldest-joke-is-having-the-last-laugh-kwksbq757&psig=AOvVaw2ENgG_QGvmQTUzZ9zN1FJu&ust=1648216198875000&source=images&cd=vfe&ved=0CAsQjRxqFwoTCOCqt_nx3vYCFQAAAAAdAAAAABAD";
+        $artefact->Tags = ["Year ".$i+1, "University"];
+        // Save the changes made.
+        $artefact->SaveChanges();
     }
 
+    // How to get all artefacts
     $artefacts = $newAccount->GetArtefacts();
-    var_dump($artefacts);
 }
 ?>
