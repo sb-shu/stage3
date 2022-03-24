@@ -27,8 +27,7 @@ class PortfolioArtefact{
         
     }
 
-    /* #region Create, Get, and Save */
-
+    /* #region Create, Get, Save, Delete */
     static function CreateArtefact() : ?PortfolioArtefact{
         // TODO: Create the artefact in the database.
     }
@@ -79,7 +78,7 @@ class PortfolioWorkExperience{
         
     }
 
-    /* #region Create, Get, and Save */
+    /* #region Create, Get, Save, Delete */
 
     // Saves changes to this object to database.
     function SaveChanges(){
@@ -102,8 +101,7 @@ class UserAccount{
 
     }
 
-    /* #region Create, Get, and Save */
-
+    /* #region Create, Get, Save, Delete */
     static function CreateUserAccount($desiredUsername, $password) : ?UserAccount{
         $db = new SQLite3(SQLPATH);
 
@@ -163,6 +161,8 @@ class UserAccount{
         // TODO: Fetch from DB.
     }
 
+    /* #region Artefacts */
+
     // Creates a new artefact attached to this account.
     function AddNewArtefact() : PortfolioArtefact{
         $db = new SQLite3(SQLPATH);
@@ -175,15 +175,29 @@ class UserAccount{
 
     // Returns all artefacts attached to this account.
     function GetArtefacts(){
-        // TODO: Fetch from DB.
+        $db = new SQLite3(SQLPATH);
+        $statement = $db->prepare("SELECT ID FROM PortfolioArtefacts WHERE Username = :username");
+        $statement->bindParam(":username", $this->Username);
+
+        $artefacts = [];
+        $count = 0;
+
+        $result = $statement->execute();
+        while($row = $result->fetchArray(SQLITE3_ASSOC)){
+            $artefacts[$count++] = PortfolioArtefact::GetArtefact($row["ID"]);
+        }
+
+        return $artefacts;
     }
+
+    /* #endregion */
 }
 
 /* #endregion */
 
 /* #region User Functions */
 
-// Creates a UserAccount. Returns a UserAccount object if successful
+// Creates a UserAccount. Returns a UserAccount object if successful.
 function CreateUser($desiredUsername, $password) : ?UserAccount{
     return UserAccount::CreateUserAccount($desiredUsername, $password);
 }
@@ -198,8 +212,7 @@ function DoesUserExist($username) : Bool{
     $db = new SQLite3(SQLPATH);
     $statement = $db->prepare("SELECT Username FROM UserAccounts WHERE Username = :username");
     $statement->bindParam(":username", $username);
-    $result = $statement->execute()->fetchArray();
-    if($result)
+    if($statement->execute()->fetchArray())
         return true;
     return false;
 }
@@ -297,5 +310,8 @@ if($newAccount){
     for($i = 0; $i < 5; $i++){
         $artefact = $newAccount->AddNewArtefact();
     }
+
+    $artefacts = $newAccount->GetArtefacts();
+    var_dump($artefacts);
 }
 ?>
