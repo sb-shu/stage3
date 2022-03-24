@@ -25,8 +25,13 @@ class PortfolioArtefact{
     }
 
     /* #region Create, Get, Save, Delete */
-    static function CreateArtefact() : ?PortfolioArtefact{
-        // TODO: Create the artefact in the database.
+    static function CreateArtefact($linkedUsername) : PortfolioArtefact{
+        $db = new SQLite3(SQLPATH);
+        $statement = $db->prepare("INSERT INTO PortfolioArtefacts (Username) VALUES (:username)");
+        $statement->bindParam(":username", $linkedUsername);
+        $statement->execute();
+
+        return PortfolioArtefact::GetArtefact($db->lastInsertRowid());
     }
 
     static function GetArtefact($artefactID) : ?PortfolioArtefact {  
@@ -67,7 +72,8 @@ class PortfolioArtefact{
         $statement->bindParam(":description", $this->Description);
         $statement->bindParam(":thumbnailLink", $this->ThumbnailLink);
         $statement->bindParam(":fileLink", $this->FileLink);
-        $statement->bindParam(":tags", implode(ARRAYSEPERATOR,$this->Tags));
+        $implodedTags = implode(ARRAYSEPERATOR,$this->Tags);
+        $statement->bindParam(":tags", $implodedTags);
 
         $statement->execute();
     }
@@ -80,6 +86,7 @@ class PortfolioWorkExperience{
     private $ID; // Int
     public $StartDate; // Date
     public $EndDate; // Date
+    private $WorkInstitutionID;
     public $JobTitle; // String
     public $Description; // String
 
@@ -88,6 +95,14 @@ class PortfolioWorkExperience{
     }
 
     /* #region Create, Get, Save, Delete */
+
+    static function CreateWorkExperience(){
+
+    }
+
+    static function GetWorkExperience($workExperienceID){
+
+    }
 
     // Saves changes to this object to database.
     function SaveChanges(){
@@ -167,35 +182,65 @@ class UserAccount{
         $statement->bindParam(":lastName", $this->LastName);
         $statement->bindParam(":profilePictureLink", $this->ProfilePictureLink);
         $statement->bindParam(":aboutMeText", $this->AboutMeText);
-        $statement->bindParam(":contacts", implode(ARRAYSEPERATOR,$this->Contacts));
+        $implodedContacts = implode(ARRAYSEPERATOR,$this->Contacts);
+        $statement->bindParam(":contacts", $implodedContacts);
 
         $statement->execute();
     }
 
     /* #endregion */
 
-    function GetEducation(){
-        // TODO: Fetch from DB.
+    /* #region Education */
+
+    // Add an education institution.
+    function AddEducation($educationInstitutionName){
+        // Check if the institution exists...
+        $id = GetEducationInstitution($educationInstitutionName);
+        if($id == -1)
+            $id = RegisterEducationInstitution($educationInstitutionName);
+
+        // If the institution exists, add it.
+        $db = new SQLite3(SQLPATH);
+
+        $statement = $db->prepare("INSERT INTO UserEducationLink (Username, EducationID) VALUES (:username, :educationID)");
+        $statement->bindParam(":username", $this->Username);
+        $statement->bindParam(":educationID", $id);
+        $statement->execute();
+        return true;
     }
 
-    function GetJobTitles(){
-        // TODO: Fetch from DB.
+    // Returns a string array of education institution names.
+    function GetEducation(){
+        $db = new SQLite3(SQLPATH);
+        $statement = $db->prepare("SELECT EducationInstitutions.Name FROM UserEducationLink JOIN EducationInstitutions ON UserEducationLink.EducationID = EducationInstitutions.ID WHERE Username = :username");
+        $statement->bindParam(":username", $this->Username);
+
+        $institutions = [];
+        $count = 0;
+
+        $result = $statement->execute();
+        while($row = $result->fetchArray(SQLITE3_ASSOC)){
+            $institutions[$count++] = $row["Name"];
+        }
+
+        return $institutions;
     }
+
+    /* #endregion */
+
+    /* #region Work Experience */
 
     function GetWorkExperience(){
         // TODO: Fetch from DB.
     }
 
+    /* #endregion */
+
     /* #region Artefacts */
 
     // Creates a new artefact attached to this account.
     function AddNewArtefact() : PortfolioArtefact{
-        $db = new SQLite3(SQLPATH);
-        $statement = $db->prepare("INSERT INTO PortfolioArtefacts (Username) VALUES (:username)");
-        $statement->bindParam(":username", $this->Username);
-        $statement->execute();
-
-        return PortfolioArtefact::GetArtefact($db->lastInsertRowid());
+        return PortfolioArtefact::CreateArtefact($this->Username);
     }
 
     // Returns all artefacts attached to this account.
@@ -260,6 +305,34 @@ function UserComparePassword($username, $password):bool{
 
 /* #endregion */
 
+/* #region Education Functions */
+
+// Register a new education institution. Returns the ID of the new education institution.
+function RegisterEducationInstitution($name) : INT{
+    $db = new SQLite3(SQLPATH);
+
+    $statement = $db->prepare("INSERT INTO EducationInstitutions (Name) VALUES (:name)");
+    $statement->bindParam(":name", $name);
+    $statement->execute();
+
+    return $db->lastInsertRowid();
+}
+
+// Returns the ID of an education institution. Returns -1 if not found.
+function GetEducationInstitution($name) : INT{
+    $db = new SQLite3(SQLPATH);
+
+    $statement = $db->prepare("SELECT ID FROM EducationInstitutions WHERE Name = :name");
+    $statement->bindParam(":name", $name);
+    $result = $statement->execute()->fetchArray(SQLITE3_ASSOC);
+
+    if(!$result)
+        return -1;
+    return $result["ID"];
+}
+
+/* #endregion */
+
 // Initializes tables
 function InitializeDatabase(){
     $db = new SQLite3(SQLPATH);
@@ -267,7 +340,7 @@ function InitializeDatabase(){
     $db->exec(
         'CREATE TABLE IF NOT EXISTS UserAccounts (
         Username TEXT PRIMARY KEY,
-        PasswordHash TEXT,
+        PasswordHash TEXT NOT NULL,
         FirstName TEXT,
         LastName TEXT,
         ProfilePictureLink TEXT,
@@ -282,9 +355,9 @@ function InitializeDatabase(){
         Name TEXT
         )'
         );
-    // Create JobTitles Table
+    // Create WorkInstitutions Table
     $db->exec(
-        'CREATE TABLE IF NOT EXISTS JobTitles (
+        'CREATE TABLE IF NOT EXISTS WorkInstitutions (
         ID INTEGER PRIMARY KEY AUTOINCREMENT,
         Name TEXT
         )'
@@ -293,9 +366,9 @@ function InitializeDatabase(){
     $db->exec(
         'CREATE TABLE IF NOT EXISTS PortfolioArtefacts (
         ID INTEGER PRIMARY KEY AUTOINCREMENT,
+        Username TEXT NOT NULL,
         Title TEXT,
         Description TEXT,
-        Username TEXT,
         ThumbnailLink TEXT,
         FileLink TEXT,
         Tags TEXT
@@ -304,26 +377,19 @@ function InitializeDatabase(){
     // Create PortfolioWorkExperiences Table
     $db->exec(
         'CREATE TABLE IF NOT EXISTS PortfolioWorkExperiences (
+        Username TEXT NOT NULL,
         ID INTEGER PRIMARY KEY AUTOINCREMENT,
-        Username TEXT,
         StartDate TEXT,
         EndDate TEXT,
-        JobTitleID INTEGER,
+        WorkInstitutionID INTEGER,
         Description TEXT
-        )'
-        );
-    // Create UserJobLink Table
-    $db->exec(
-        'CREATE TABLE IF NOT EXISTS UserJobLink (
-        Username TEXT,
-        JobTitleID INTEGER
         )'
         );
     // Create UserEducationLink Table
     $db->exec(
         'CREATE TABLE IF NOT EXISTS UserEducationLink (
-        Username TEXT,
-        EducationID INTEGER
+        Username TEXT NOT NULL,
+        EducationID INTEGER NOT NULL
         )'
         );
 }
@@ -341,7 +407,7 @@ if($newAccount){
     $newAccount->AboutMeText = "I am a music person.";
     $newAccount->Contacts = ["Youtube: some link", "Github: Some link"];
 
-    // Save the changes made.
+    // Save the changes made to the fields.
     $newAccount->SaveChanges();
 
     // Add artefacts...
@@ -352,11 +418,18 @@ if($newAccount){
         $artefact->ThumbnailLink = "https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.thetimes.co.uk%2Farticle%2Frick-astley-the-internet-s-oldest-joke-is-having-the-last-laugh-kwksbq757&psig=AOvVaw2ENgG_QGvmQTUzZ9zN1FJu&ust=1648216198875000&source=images&cd=vfe&ved=0CAsQjRxqFwoTCOCqt_nx3vYCFQAAAAAdAAAAABAD";
         $artefact->FileLink = "https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.thetimes.co.uk%2Farticle%2Frick-astley-the-internet-s-oldest-joke-is-having-the-last-laugh-kwksbq757&psig=AOvVaw2ENgG_QGvmQTUzZ9zN1FJu&ust=1648216198875000&source=images&cd=vfe&ved=0CAsQjRxqFwoTCOCqt_nx3vYCFQAAAAAdAAAAABAD";
         $artefact->Tags = ["Year ".$i+1, "University"];
-        // Save the changes made.
+        // Save the changes made to the fields.
         $artefact->SaveChanges();
     }
 
-    // How to get all artefacts
+    // How to get all artefacts registered to the user.
     $artefacts = $newAccount->GetArtefacts();
+
+    // Add education...
+    $newAccount->AddEducation("A University");
+    $newAccount->AddEducation("A School");
+
+    // Gow to get all education institutes registered to the user.
+    $education = $newAccount->GetEducation();
 }
 ?>
