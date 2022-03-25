@@ -17,6 +17,10 @@
         }
 
         $user = CreateUser($username, $password);
+        $user->FirstName = $firstName;
+        $user->LastName = $lastName;
+        $user->SaveChanges();
+        
         $_SESSION["username"] = $username;
         $_SESSION["user"] = $user;
 

@@ -1,7 +1,29 @@
 <?php
   // Include methods for database usage.
   include_once("DatabaseInterface.php");
-  $user = GetUser("testuser");
+  include_once("Session.php");
+
+  StartSession();
+
+  $user = null;
+  if (isset($_GET["user"])) {
+    $user = GetUser($_GET["user"]);
+  } else if (IsLoggedIn()) {
+    $user = GetSessionUser();
+  } else {
+    // TODO: proper error handling
+    echo "You are not logged in and have not specified a user whose profile you wish to view. Please <a href='home.php'>log in</a>";
+    die;
+  }
+
+  if ($user == null) {
+    // TODO: proper error handling
+    echo "No user with that name exists.";
+    die;
+  }
+
+  var_dump($user);
+
   $artefacts = $user->GetArtefacts();
 ?>
 
@@ -14,7 +36,7 @@
 <div class="split left">
   <div class="top">
     <img src="Donny.webp" alt="Profile Picture">
-    <h2>Name: Jane Flex</h2>
+    <h2>Name: <?=$user->FirstName;?> <?=$user->LastName;?></h2>
     <p>University: Sheffield Hallam</p>
     <p>Date: 2021 - Current Date</p>
     <p>Education: Moira High School</p>

@@ -29,7 +29,7 @@
     </head>
     <body>
         <?php if (IsLoggedIn()): ?>
-            You are logged in as <?=$_SESSION["username"];?>. <a href="logout.php">Log out</a>
+            You are logged in as <?=$_SESSION["username"];?>. <a href="index.php">Go to your profile</a> or <a href="logout.php">log out</a>.
         <?php else: ?>
             <form action="" method="POST">
                 <label for="username">Username</label>
