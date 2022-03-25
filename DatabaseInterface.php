@@ -413,7 +413,7 @@ if($newAccount){
     // Add artefacts...
     for($i = 0; $i < 5; $i++){
         $artefact = $newAccount->AddNewArtefact();
-        $artefact->Title = "Artefact ".$i+1;
+        $artefact->Title = "Artefact ".($i+1);
         $artefact->Description = "This is artefact number ".($i+1).".";
         $artefact->ThumbnailLink = "https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.thetimes.co.uk%2Farticle%2Frick-astley-the-internet-s-oldest-joke-is-having-the-last-laugh-kwksbq757&psig=AOvVaw2ENgG_QGvmQTUzZ9zN1FJu&ust=1648216198875000&source=images&cd=vfe&ved=0CAsQjRxqFwoTCOCqt_nx3vYCFQAAAAAdAAAAABAD";
         $artefact->FileLink = "https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.thetimes.co.uk%2Farticle%2Frick-astley-the-internet-s-oldest-joke-is-having-the-last-laugh-kwksbq757&psig=AOvVaw2ENgG_QGvmQTUzZ9zN1FJu&ust=1648216198875000&source=images&cd=vfe&ved=0CAsQjRxqFwoTCOCqt_nx3vYCFQAAAAAdAAAAABAD";

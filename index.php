@@ -47,7 +47,8 @@
     <h3 id="year1">Year 1</h2>
         <?php
           var_dump($artefacts);
-          
+          echo $artefacts[0]->Title;
+          echo $artefacts[1]->Description;
         ?>
     <h3 id="year2">Year 2</h2>
 
