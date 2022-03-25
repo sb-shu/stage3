@@ -293,7 +293,7 @@ function UserComparePassword($username, $password):bool{
 
     $statement = $db->prepare("SELECT PasswordHash FROM UserAccounts WHERE Username = :username");
     $statement->bindParam(':username', $username);
-    $result = $statement->execute();
+    $result = $statement->execute()->fetchArray();
 
     // If query returns empty, return.
     if (!$result) {

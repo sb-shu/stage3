@@ -29,14 +29,15 @@
     </head>
     <body>
         <?php if (IsLoggedIn()): ?>
-            You are logged in as <?=GetSessionUser()->Username;?>. <a href="logout.php">Log out</a>
+            You are logged in as <?=$_SESSION["username"];?>. <a href="index.php">Go to your profile</a> or <a href="logout.php">log out</a>.
         <?php else: ?>
             <form action="" method="POST">
                 <label for="username">Username</label>
                 <input type="text" name="username" id="username" required />
                 <label for="password">Password</label>
                 <input type="password" name="password" id="password" required />
-                <input type="submit" />
+                <button type="submit">Log in</button>
+                <a href="register.php">Register</a>
             </form>
         <?php endif; ?>
     </body>

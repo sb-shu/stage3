@@ -1,8 +1,26 @@
 <?php
-  // Include methods for database usage.
   include_once("DatabaseInterface.php");
-  $user = GetUser("testuser");
-  $artefacts = $user->GetArtefacts();
+  include_once("Session.php");
+
+  StartSession();
+
+  $user = null;
+  // Figure out which user to view
+  if (isset($_GET["user"])) {
+    // Specified user.
+    $user = GetUser($_GET["user"]);
+  } else if (IsLoggedIn()) {
+    // No user was specified, so use the current one.
+    $user = GetSessionUser();
+  } else {
+    // No user to view.
+    // TODO: proper error handling
+    echo "You are not logged in and have not specified a user whose profile you wish to view. Please <a href='home.php'>log in</a>";
+    die;
+  }
+
+  // User doesn't exist.
+  if ($user != null) {
 ?>
 
 <html>
@@ -14,7 +32,7 @@
 <div class="split left">
   <div class="top">
     <img src="Donny.webp" alt="Profile Picture">
-    <h2>Name: Jane Flex</h2>
+    <h2>Name: <?=$user->FirstName;?> <?=$user->LastName;?></h2>
     <p>University: Sheffield Hallam</p>
     <p>Date: 2021 - Current Date</p>
     <p>Education: Moira High School</p>
@@ -47,8 +65,7 @@
     <h3 id="year1">Year 1</h2>
         <?php
           var_dump($artefacts);
-          echo $artefacts[0]->Title;
-          echo $artefacts[1]->Description;
+          
         ?>
     <h3 id="year2">Year 2</h2>
 
@@ -91,3 +108,10 @@ Follow emerging technologies </p>
 </div>
 </body>
 </html>
+<?php
+  }
+  // If "user" is not set or doesn't exist.
+  else{
+    echo "User not set or does not exist.";
+  }
+?>
