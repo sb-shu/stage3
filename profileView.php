@@ -61,10 +61,7 @@
     <a href="#year4">Year 4</a>
 
     <h3 id="year1">Year 1</h2>
-        <?php
-          var_dump($artefacts);
-          
-        ?>
+    
     <h3 id="year2">Year 2</h2>
 
     <h3 id="year3">Year 3</h2>
