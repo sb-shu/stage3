@@ -11,7 +11,7 @@ define("ARRAYSEPERATOR","\n");
 
 // Class that holds data for a file that can be shown on a user's profile.
 class PortfolioArtefact{
-    private $ID; // Int
+    private $_ID; // Int
     public $Title;
     public $Description;
     // Link to a thumbnail image to display.
@@ -47,7 +47,7 @@ class PortfolioArtefact{
         }
     
         $artefact = new PortfolioArtefact();
-        $artefact->ID = $artefactID;
+        $artefact->_ID = $artefactID;
         $artefact->Title = $result["Title"];
         $artefact->Description = $result["Description"];
         $artefact->FileLink = $result["FileLink"];
@@ -66,7 +66,7 @@ class PortfolioArtefact{
         FileLink = :fileLink,
         Tags = :tags
         WHERE ID = :id");
-        $statement->bindParam(":id", $this->ID);
+        $statement->bindParam(":id", $this->_ID);
 
         $statement->bindParam(":title", $this->Title);
         $statement->bindParam(":description", $this->Description);
@@ -83,10 +83,10 @@ class PortfolioArtefact{
 
 // Class that holds data about a person's past work experience.
 class PortfolioWorkExperience{
-    private $ID; // Int
+    private $_ID; // Int
     public $StartDate; // Date
     public $EndDate; // Date
-    private $WorkInstitutionID;
+    private $_WorkInstitutionID;
     public $JobTitle; // String
     public $Description; // String
 
@@ -96,20 +96,68 @@ class PortfolioWorkExperience{
 
     /* #region Create, Get, Save, Delete */
 
-    static function CreateWorkExperience(){
+    static function CreateWorkExperience($linkedUsername, $workInstitutionID) : PortfolioWorkExperience{
+        $db = new SQLite3(SQLPATH);
+        $statement = $db->prepare("INSERT INTO PortfolioWorkExperiences (Username, WorkInstitutionID) VALUES (:username, :workInstitutionID)");
+        $statement->bindParam(":username", $linkedUsername);
+        $statement->bindParam(":workInstitutionID", $workInstitutionID);
+        $statement->execute();
 
+        return PortfolioWorkExperience::GetWorkExperience($db->lastInsertRowid());
     }
 
-    static function GetWorkExperience($workExperienceID){
+    static function GetWorkExperience($workExperienceID) : ?PortfolioWorkExperience{
+        $db = new SQLite3(SQLPATH);
 
+        $statement = $db->prepare("SELECT StartDate, EndDate, WorkInstitutionID, JobTitle, Description FROM PortfolioWorkExperiences WHERE ID = :id");
+        $statement->bindParam(":id", $workExperienceID);
+        $result = $statement->execute()->fetchArray(SQLITE3_ASSOC);
+    
+        // If query returns empty, return.
+        if (!$result) {
+            return null;
+        }
+    
+        $workExperience = new PortfolioWorkExperience();
+        $workExperience->_ID = $workExperienceID;
+        $workExperience->_WorkInstitutionID = $result["WorkInstitutionID"];
+        $workExperience->StartDate = $result["StartDate"];
+        $workExperience->EndDate = $result["EndDate"];
+        $workExperience->JobTitle = $result["JobTitle"];
+        $workExperience->Description = $result["Description"];
+        return $workExperience;
     }
 
     // Saves changes to this object to database.
     function SaveChanges(){
-        // TODO: Write fields to database.
+        $db = new SQLite3(SQLPATH);
+        $statement = $db->prepare("UPDATE PortfolioWorkExperiences SET 
+        StartDate = :startDate,
+        EndDate = :endDate,
+        JobTitle = :jobTitle,
+        Description = :description
+        WHERE ID = :id");
+        $statement->bindParam(":id", $this->_ID);
+
+        $statement->bindParam(":startDate", $this->StartDate);
+        $statement->bindParam(":endDate", $this->EndDate);
+        $statement->bindParam(":jobTitle", $this->JobTitle);
+        $statement->bindParam(":description", $this->Description);
+
+        $statement->execute();
     }
 
     /* #endregion */
+
+    // Returns the name of the work institution.
+    function GetWorkInstitutionName(){
+        $db = new SQLite3(SQLPATH);
+
+        $statement = $db->prepare("SELECT Name FROM WorkInstitutions WHERE ID = :id");
+        $statement->bindParam(":id", $this->_WorkInstitutionID);
+        return $statement->execute()->fetchArray(SQLITE3_ASSOC)["Name"];
+    }
+
 }
 
 // Class that holds all publicly accessable data regarding a user, including name, portfolio items, and more.
@@ -206,7 +254,6 @@ class UserAccount{
         $statement->bindParam(":username", $this->Username);
         $statement->bindParam(":educationID", $id);
         $statement->execute();
-        return true;
     }
 
     // Returns a string array of education institution names.
@@ -230,8 +277,33 @@ class UserAccount{
 
     /* #region Work Experience */
 
+    // Add a new work experience object to the user. Returns the resultant work experience object.
+    function AddWorkExperience($workInstitutionName) : PortfolioWorkExperience{
+        // Check if the institution exists...
+        $id = GetWorkInstitution($workInstitutionName);
+        if($id == -1)
+            $id = RegisterWorkInstitution($workInstitutionName);
+
+        // If the institution exists, add it.
+
+        return PortfolioWorkExperience::CreateWorkExperience($this->Username, $id);
+    }
+
+    // Returns an array of PortfolioWorkExperience objects that are linked to this user.
     function GetWorkExperience(){
-        // TODO: Fetch from DB.
+        $db = new SQLite3(SQLPATH);
+        $statement = $db->prepare("SELECT ID FROM PortfolioWorkExperiences WHERE Username = :username");
+        $statement->bindParam(":username", $this->Username);
+
+        $experiences = [];
+        $count = 0;
+
+        $result = $statement->execute();
+        while($row = $result->fetchArray(SQLITE3_ASSOC)){
+            $experiences[$count++] = PortfolioWorkExperience::GetWorkExperience($row["ID"]);
+        }
+
+        return $experiences;
     }
 
     /* #endregion */
@@ -333,6 +405,34 @@ function GetEducationInstitution($name) : INT{
 
 /* #endregion */
 
+/* #region Work Functions */
+
+// Register a new work institution. Returns the ID of the new work institution.
+function RegisterWorkInstitution($name) : INT{
+    $db = new SQLite3(SQLPATH);
+
+    $statement = $db->prepare("INSERT INTO WorkInstitutions (Name) VALUES (:name)");
+    $statement->bindParam(":name", $name);
+    $statement->execute();
+
+    return $db->lastInsertRowid();
+}
+
+// Returns the ID of an work institution. Returns -1 if not found.
+function GetWorkInstitution($name) : INT{
+    $db = new SQLite3(SQLPATH);
+
+    $statement = $db->prepare("SELECT ID FROM WorkInstitutions WHERE Name = :name");
+    $statement->bindParam(":name", $name);
+    $result = $statement->execute()->fetchArray(SQLITE3_ASSOC);
+
+    if(!$result)
+        return -1;
+    return $result["ID"];
+}
+
+/* #endregion */
+
 // Initializes tables
 function InitializeDatabase(){
     $db = new SQLite3(SQLPATH);
@@ -352,7 +452,7 @@ function InitializeDatabase(){
     $db->exec(
         'CREATE TABLE IF NOT EXISTS EducationInstitutions (
         ID INTEGER PRIMARY KEY AUTOINCREMENT,
-        Name TEXT
+        Name TEXT NOT NULL
         )'
         );
     // Create WorkInstitutions Table
@@ -377,11 +477,12 @@ function InitializeDatabase(){
     // Create PortfolioWorkExperiences Table
     $db->exec(
         'CREATE TABLE IF NOT EXISTS PortfolioWorkExperiences (
-        Username TEXT NOT NULL,
         ID INTEGER PRIMARY KEY AUTOINCREMENT,
+        Username TEXT NOT NULL,
+        WorkInstitutionID INTEGER NOT NULL,
         StartDate TEXT,
         EndDate TEXT,
-        WorkInstitutionID INTEGER,
+        JobTitle TEXT,
         Description TEXT
         )'
         );
@@ -412,12 +513,16 @@ if($newAccount){
 
     // Add artefacts...
     for($i = 0; $i < 5; $i++){
+        // Create a new object
         $artefact = $newAccount->AddNewArtefact();
+        
+        // Populate fields
         $artefact->Title = "Artefact ".($i+1);
         $artefact->Description = "This is artefact number ".($i+1).".";
         $artefact->ThumbnailLink = "https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.thetimes.co.uk%2Farticle%2Frick-astley-the-internet-s-oldest-joke-is-having-the-last-laugh-kwksbq757&psig=AOvVaw2ENgG_QGvmQTUzZ9zN1FJu&ust=1648216198875000&source=images&cd=vfe&ved=0CAsQjRxqFwoTCOCqt_nx3vYCFQAAAAAdAAAAABAD";
         $artefact->FileLink = "https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.thetimes.co.uk%2Farticle%2Frick-astley-the-internet-s-oldest-joke-is-having-the-last-laugh-kwksbq757&psig=AOvVaw2ENgG_QGvmQTUzZ9zN1FJu&ust=1648216198875000&source=images&cd=vfe&ved=0CAsQjRxqFwoTCOCqt_nx3vYCFQAAAAAdAAAAABAD";
         $artefact->Tags = ["Year ".$i+1, "University"];
+        
         // Save the changes made to the fields.
         $artefact->SaveChanges();
     }
@@ -429,7 +534,25 @@ if($newAccount){
     $newAccount->AddEducation("A University");
     $newAccount->AddEducation("A School");
 
-    // Gow to get all education institutes registered to the user.
+    // How to get all education institutes registered to the user.
     $education = $newAccount->GetEducation();
+
+    // Add work experience...
+    for($i = 0; $i < 5; $i++){
+        // Create a new entry
+        $workExperience = $newAccount->AddWorkExperience("Company ".($i+1));
+        
+        // Populate fields.
+        $workExperience->StartDate = ($i*2+1)."/3/2022";
+        $workExperience->EndDate = ($i*2+2)."/3/2022";
+        $workExperience->JobTitle = "Worker number ".($i+1);
+        $workExperience->Description = "I worked here.";
+
+        // Save the changes made to the fields.
+        $workExperience->SaveChanges();
+    }
+
+    // How to get all work experiences
+    $workExperience = $newAccount->GetWorkExperience();
 }
 ?>
