@@ -18,9 +18,6 @@
     echo "You are not logged in and have not specified a user whose profile you wish to view. Please <a href='home.php'>log in</a>";
     die;
   }
-
-  // User doesn't exist.
-  if ($user != null) {
 ?>
 
 <html>
@@ -108,10 +105,3 @@ Follow emerging technologies </p>
 </div>
 </body>
 </html>
-<?php
-  }
-  // If "user" is not set or doesn't exist.
-  else{
-    echo "User not set or does not exist.";
-  }
-?>
