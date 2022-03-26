@@ -1,0 +1,31 @@
+.TimelineContainer{
+    display:flex;
+    float:left;
+    padding: 5px;
+    padding-bottom: 10px;
+    border: 1px solid black;
+    overflow-x: scroll;
+    overflow-y: hidden;
+    height: 250px;
+}
+
+.TimelineContainer *{
+    margin: 5px;
+}
+
+.TimelineItem{
+    border: 1px solid black;
+    width: 500px;
+}
+
+.timelineTitle{
+    text-align: center;
+}
+
+.TimelineDescription{
+    background-color: lightgray;
+    color:black;
+    height:50%;
+    overflow-x: hidden;
+    overflow-y: scroll;
+}

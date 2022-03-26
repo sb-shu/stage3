@@ -538,7 +538,7 @@ if($newAccount){
     $education = $newAccount->GetEducation();
 
     // Add work experience...
-    for($i = 0; $i < 5; $i++){
+    for($i = 0; $i < 10; $i++){
         // Create a new entry
         $workExperience = $newAccount->AddWorkExperience("Company ".($i+1));
         
@@ -546,7 +546,7 @@ if($newAccount){
         $workExperience->StartDate = ($i*2+1)."/3/2022";
         $workExperience->EndDate = ($i*2+2)."/3/2022";
         $workExperience->JobTitle = "Worker number ".($i+1);
-        $workExperience->Description = "I worked here.";
+        $workExperience->Description = "I worked here for a long time. Here is a long bit of text of random length: ".str_pad("",rand(10,100),"I am a statement. ");
 
         // Save the changes made to the fields.
         $workExperience->SaveChanges();

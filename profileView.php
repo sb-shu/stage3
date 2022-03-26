@@ -23,6 +23,7 @@
 <html>
 <head>
   <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="TimelineStyle.css" />
 </head>
 <body>
 
@@ -71,28 +72,12 @@
     <h3 id="year4">Year 4</h2>
    
     <h2 id="work" >Work Experience</h2>
-    <h3>Lawyer</h3>
-    <h3>Sept 2012 - March 2018</h3>
-    <p>Design and build advanced applications for the Android platform
-Collaborate with cross-functional teams to define, design, and ship new features
-Work with outside data sources and APIs
-Unit-test code for robustness, including edge cases, usability, and general reliability
-Work on bug fixing and improving application performance
-Continuously discover, evaluate, and implement new technologies to maximize development efficiency </p>
 
-    <h3>Software Developer</h3>
-    <h3>July 2019 - Oct 2021</h3>
-    <p>Participate in the entire application lifecycle, focusing on coding and debugging 
-Write clean code to develop functional web applications
-Troubleshoot and debug applications
-Perform UI tests to optimize performance
-Manage cutting-edge technologies to improve legacy applications
-Collaborate with Front-end developers to integrate user-facing elements with server side logic
-Gather and address technical and design requirements
-Provide training and support to internal teams
-Build reusable code and libraries for future use
-Liaise with developers, designers and system administrators to identify new features
-Follow emerging technologies </p>
+    <?php
+      // Generate the timeline of work experience.
+      include_once("WorkExperienceTimelineMaker.php");
+      GenerateWorkExperienceTimeline($user->GetWorkExperience());
+    ?>
 
     <h2 id="aboutme">About Me</h2>
       <p>
