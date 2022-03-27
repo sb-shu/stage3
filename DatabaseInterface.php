@@ -168,6 +168,8 @@ class UserAccount{
     public $ProfilePictureLink; // String
     public $AboutMe; // String
     public $Contacts; // String[]
+    public $IsPublic; // Bool
+    public $IsAdmin; // Bool
 
     private function __constructor(){
 
@@ -183,7 +185,7 @@ class UserAccount{
 
         // If requirements are met, create and return true.
 
-        $statement = $db->prepare("INSERT INTO UserAccounts (Username, PasswordHash) VALUES (:username, :passwordHash)");
+        $statement = $db->prepare("INSERT INTO UserAccounts (Username, PasswordHash, IsPublic, IsAdmin) VALUES (:username, :passwordHash, false, false)");
         $statement->bindParam(":username", $desiredUsername);
         $hash = password_hash($password, PASSWORD_DEFAULT);
         $statement->bindParam(":passwordHash", $hash);
@@ -194,7 +196,7 @@ class UserAccount{
     static function GetUserAccount($username) : ?UserAccount{
         $db = new SQLite3(SQLPATH);
 
-        $statement = $db->prepare("SELECT FirstName, LastName, Contacts, ProfilePictureLink, AboutMeText FROM UserAccounts WHERE Username = :username");
+        $statement = $db->prepare("SELECT FirstName, LastName, Contacts, ProfilePictureLink, AboutMeText, IsPublic, IsAdmin FROM UserAccounts WHERE Username = :username");
         $statement->bindParam(":username", $username);
         $result = $statement->execute()->fetchArray(SQLITE3_ASSOC);
 
@@ -210,6 +212,8 @@ class UserAccount{
         $userObject->ProfilePictureLink = $result["ProfilePictureLink"];
         $userObject->AboutMe = $result["AboutMeText"];
         $userObject->Contacts = explode(ARRAYSEPERATOR,$result["Contacts"]);
+        $userObject->IsPublic = $result["IsPublic"];
+        $userObject->IsAdmin = $result["IsAdmin"];
 
         return $userObject;
     }
@@ -222,7 +226,9 @@ class UserAccount{
         LastName = :lastName,
         ProfilePictureLink = :profilePictureLink,
         AboutMeText = :aboutMeText,
-        Contacts = :contacts
+        Contacts = :contacts,
+        IsPublic = :isPublic,
+        IsAdmin = :isAdmin
         WHERE Username = :username");
         $statement->bindParam(":username", $this->Username);
 
@@ -232,6 +238,8 @@ class UserAccount{
         $statement->bindParam(":aboutMeText", $this->AboutMeText);
         $implodedContacts = implode(ARRAYSEPERATOR,$this->Contacts);
         $statement->bindParam(":contacts", $implodedContacts);
+        $statement->bindParam(":isPublic", $this->IsPublic);
+        $statement->bindParam(":isAdmin", $this->IsAdmin);
 
         $statement->execute();
     }
@@ -375,6 +383,15 @@ function UserComparePassword($username, $password):bool{
     return password_verify($password, $result["PasswordHash"]);
 }
 
+function GetRandomPublicAccount() : ?UserAccount {
+    $db = new SQLite3(SQLPATH);
+
+    $statement = $db->prepare("SELECT Username FROM UserAccounts WHERE IsPublic = 'true' ORDER BY RANDOM() LIMIT 1");
+    $result = $statement->execute()->fetchArray();
+
+    return GetUser($result["Username"]);
+}
+
 /* #endregion */
 
 /* #region Education Functions */
@@ -445,7 +462,9 @@ function InitializeDatabase(){
         LastName TEXT,
         ProfilePictureLink TEXT,
         AboutMeText TEXT,
-        Contacts Text
+        Contacts Text,
+        IsPublic TEXT NOT NULL,
+        IsAdmin TEXT NOT NULL
         )'
         );
     // Create EducationInstitutions Table
