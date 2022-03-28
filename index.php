@@ -4,25 +4,6 @@
 
     StartSession();
 
-    if ($_SERVER["REQUEST_METHOD"] == "POST") {
-        $username = $_POST["username"];
-        $password = $_POST["password"];
-
-        $verified = UserComparePassword($username, $password);
-        if (!$verified) {
-            // TODO: handle properly
-            echo "Invalid username or password";
-            die;
-        } else {
-            $user = GetUser($username);
-            $_SESSION["username"] = $username;
-            $_SESSION["user"] = $user;
-
-            header("Location: home.php");
-            exit;
-        }
-    }
-
     $users = GetRandomPublicAccounts(5);
 ?>
 <!DOCTYPE html>
@@ -35,7 +16,7 @@
             <?php if (IsLoggedIn()): ?>
                 You are logged in as <?=$_SESSION["username"];?>. <a href="profileView.php">Go to your profile</a> or <a href="logout.php">log out</a>.
             <?php else: ?>
-                <form action="" method="POST">
+                <form action="login.php" method="POST">
                     <b>Log in:</b>
                     <input type="text" name="username" id="username" placeholder="Username" required />
                     <input type="password" name="password" id="password" placeholder="Password" required />

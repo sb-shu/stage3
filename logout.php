@@ -3,4 +3,4 @@
 
     StartSession();
     LogOutSession();
-    header("Location: home.php");
+    header("Location: index.php");

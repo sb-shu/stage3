@@ -20,11 +20,11 @@
         $user->FirstName = $firstName;
         $user->LastName = $lastName;
         $user->SaveChanges();
-        
+
         $_SESSION["username"] = $username;
         $_SESSION["user"] = $user;
 
-        header("Location: home.php");
+        header("Location: index.php");
         exit;
     }
 ?>
