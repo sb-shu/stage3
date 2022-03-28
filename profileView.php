@@ -70,13 +70,12 @@
       echo "<br>";
       echo $artefacts[$x]->Description;
       echo "<br>";
-      echo $artefacts[$x]->ThumbnailLink;
+      ?>
+      <a href=<?php $artefacts[$x]->FileLink ?>  download="Rick">
+        <img src=<?php $artefacts[$x]->ThumbnailLink ?> alt="Rick" width="104" height="142">
+      </a>
+      <?php 
       echo "<br>";
-      echo $artefacts[$x]->FileLink;  
-      foreach($artefacts[$x]->Tags as $tag){
-        echo $tag . "\n";
-      echo "<br>";
-    }
     }
     ?>
 
