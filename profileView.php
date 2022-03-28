@@ -62,6 +62,24 @@
 
     <h3 id="year1">Year 1</h2>
     
+    <?php
+    $artefacts = $user->GetArtefacts();
+    $length = count($artefacts)-1;
+    for ($x = 0; $x <= $length; $x++) {
+      echo $artefacts[$x]->Title;
+      echo "<br>";
+      echo $artefacts[$x]->Description;
+      echo "<br>";
+      echo $artefacts[$x]->ThumbnailLink;
+      echo "<br>";
+      echo $artefacts[$x]->FileLink;  
+      foreach($artefacts[$x]->Tags as $tag){
+        echo $tag . "\n";
+      echo "<br>";
+    }
+    }
+    ?>
+
     <h3 id="year2">Year 2</h2>
 
     <h3 id="year3">Year 3</h2>
