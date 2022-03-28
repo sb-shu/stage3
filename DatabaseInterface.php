@@ -383,13 +383,19 @@ function UserComparePassword($username, $password):bool{
     return password_verify($password, $result["PasswordHash"]);
 }
 
-function GetRandomPublicAccount() : ?UserAccount {
+function GetRandomPublicAccounts($count = 1) : array {
     $db = new SQLite3(SQLPATH);
 
-    $statement = $db->prepare("SELECT Username FROM UserAccounts WHERE IsPublic = 'true' ORDER BY RANDOM() LIMIT 1");
-    $result = $statement->execute()->fetchArray();
+    $statement = $db->prepare("SELECT Username FROM UserAccounts WHERE IsPublic = 'true' ORDER BY RANDOM() LIMIT :count");
+    $statement->bindParam(':count', $count);
+    $result = $statement->execute();
 
-    return GetUser($result["Username"]);
+    $users = [];
+    while ($user = $result->fetchArray()) {
+        $users[$user["Username"]] = GetUser($user["Username"]);
+    }
+
+    return $users;
 }
 
 /* #endregion */
@@ -519,6 +525,9 @@ InitializeDatabase();
 
 // Create a testing account.
 $newAccount = CreateUser("testuser", "pass");
+$newAccount = CreateUser("testuser1", "pass");
+$newAccount = CreateUser("testuser2", "pass");
+$newAccount = CreateUser("testuser3", "pass");
 if($newAccount){
     // Set new account details...
     $newAccount->FirstName = "Test";
