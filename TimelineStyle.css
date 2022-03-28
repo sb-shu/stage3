@@ -1,12 +1,9 @@
 .TimelineContainer{
-    display:flex;
-    float:left;
     padding: 5px;
-    padding-bottom: 10px;
     border: 1px solid black;
     overflow-x: scroll;
     overflow-y: hidden;
-    height: 250px;
+    white-space: nowrap;
 }
 
 .TimelineContainer *{
@@ -17,6 +14,7 @@
 .TimelineItem{
     border: 1px solid black;
     width: 500px;
+    display:inline-block;
 }
 
 .timelineTitle{
@@ -26,7 +24,7 @@
 .TimelineDescription{
     background-color: lightgray;
     color:black;
-    height:50%;
+    height:150px;
     overflow-x: hidden;
     overflow-y: scroll;
 }
