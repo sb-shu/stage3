@@ -386,15 +386,16 @@ function UserComparePassword($username, $password):bool{
 function GetRandomPublicAccounts($count = 1) : array {
     $db = new SQLite3(SQLPATH);
 
-    $statement = $db->prepare("SELECT Username FROM UserAccounts WHERE IsPublic = 'true' ORDER BY RANDOM() LIMIT :count");
-    $statement->bindParam(':count', $count);
+
+    $statement = $db->prepare("SELECT Username FROM UserAccounts WHERE IsPublic = 1 ORDER BY RANDOM() LIMIT :count");
+    $statement->bindParam(":count", $count);
     $result = $statement->execute();
 
     $users = [];
     while ($user = $result->fetchArray()) {
         $users[$user["Username"]] = GetUser($user["Username"]);
     }
-
+    
     return $users;
 }
 
@@ -524,7 +525,7 @@ function InitializeDatabase(){
 InitializeDatabase();
 
 // Create a testing account.
-for($accountNumber = 0; $accountNumber < 5; $accountNumber++){
+for($accountNumber = 0; $accountNumber < 7; $accountNumber++){
     if($accountNumber == 0){
         $newAccount = CreateUser("testuser", "pass");
     }
@@ -538,6 +539,8 @@ for($accountNumber = 0; $accountNumber < 5; $accountNumber++){
         $newAccount->ProfilePictureLink = "https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.thetimes.co.uk%2Farticle%2Frick-astley-the-internet-s-oldest-joke-is-having-the-last-laugh-kwksbq757&psig=AOvVaw2ENgG_QGvmQTUzZ9zN1FJu&ust=1648216198875000&source=images&cd=vfe&ved=0CAsQjRxqFwoTCOCqt_nx3vYCFQAAAAAdAAAAABAD";
         $newAccount->AboutMeText = "I am a music person.";
         $newAccount->Contacts = ["Youtube: some link", "Github: Some link"];
+        $newAccount->IsAdmin = $accountNumber % 5 == 4;
+        $newAccount->IsPublic = $accountNumber % 2 == 1;
         
         // Save the changes made to the fields.
         $newAccount->SaveChanges();
