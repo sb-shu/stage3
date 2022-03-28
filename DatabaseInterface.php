@@ -566,7 +566,7 @@ if($newAccount){
     $education = $newAccount->GetEducation();
 
     // Add work experience...
-    for($i = 0; $i < 10; $i++){
+    for($i = 0; $i < 5; $i++){
         // Create a new entry
         $workExperience = $newAccount->AddWorkExperience("Company ".($i+1));
         

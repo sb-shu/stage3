@@ -15,7 +15,7 @@
   } else {
     // No user to view.
     // TODO: proper error handling
-    echo "You are not logged in and have not specified a user whose profile you wish to view. Please <a href='home.php'>log in</a>";
+    echo "You are not logged in and have not specified a user whose profile you wish to view. Please <a href='index.php'>log in</a>";
     die;
   }
 ?>
@@ -63,6 +63,7 @@
     <h3 id="year1">Year 1</h2>
     
     <?php
+    echo $UserAccounts->Username;
     $artefacts = $user->GetArtefacts();
     $length = count($artefacts)-1;
     for ($x = 0; $x <= $length; $x++) {
@@ -72,7 +73,7 @@
       echo "<br>";
       ?>
       <a href=<?php $artefacts[$x]->FileLink ?>  download="Rick">
-        <img src=<?php $artefacts[$x]->ThumbnailLink ?> alt="Rick" width="104" height="142">
+        <img src=<?php $artefacts[$x]->ThumbnailLink ?> alt="Rick" width="400" height="160">
       </a>
       <?php 
       echo "<br>";

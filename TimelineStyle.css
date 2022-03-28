@@ -25,7 +25,8 @@
     background-color: lightgray;
     color:black;
     height:150px;
-    overflow-x: hidden;
     overflow-y: scroll;
+    overflow-x: hidden;
+    
 }
 
