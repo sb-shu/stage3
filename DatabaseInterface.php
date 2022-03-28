@@ -524,63 +524,67 @@ function InitializeDatabase(){
 InitializeDatabase();
 
 // Create a testing account.
-$newAccount = CreateUser("testuser", "pass");
-$newAccount = CreateUser("testuser1", "pass");
-$newAccount = CreateUser("testuser2", "pass");
-$newAccount = CreateUser("testuser3", "pass");
-if($newAccount){
-    // Set new account details...
-    $newAccount->FirstName = "Test";
-    $newAccount->LastName = "Testington";
-    $newAccount->ProfilePictureLink = "https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.thetimes.co.uk%2Farticle%2Frick-astley-the-internet-s-oldest-joke-is-having-the-last-laugh-kwksbq757&psig=AOvVaw2ENgG_QGvmQTUzZ9zN1FJu&ust=1648216198875000&source=images&cd=vfe&ved=0CAsQjRxqFwoTCOCqt_nx3vYCFQAAAAAdAAAAABAD";
-    $newAccount->AboutMeText = "I am a music person.";
-    $newAccount->Contacts = ["Youtube: some link", "Github: Some link"];
-
-    // Save the changes made to the fields.
-    $newAccount->SaveChanges();
-
-    // Add artefacts...
-    for($i = 0; $i < 5; $i++){
-        // Create a new object
-        $artefact = $newAccount->AddNewArtefact();
-        
-        // Populate fields
-        $artefact->Title = "Artefact ".($i+1);
-        $artefact->Description = "This is artefact number ".($i+1).".";
-        $artefact->ThumbnailLink = "RickRolled.webp";
-        $artefact->FileLink = "RickRolled.webp";
-        $artefact->Tags = ["Year ".$i+1, "University"];
+for($accountNumber = 0; $accountNumber < 5; $accountNumber++){
+    if($accountNumber == 0){
+        $newAccount = CreateUser("testuser", "pass");
+    }
+    else{
+        $newAccount = CreateUser("AnotherUser".$accountNumber, "pass");
+    }
+    if($newAccount){
+        // Set new account details...
+        $newAccount->FirstName = "Test";
+        $newAccount->LastName = "Testington";
+        $newAccount->ProfilePictureLink = "https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.thetimes.co.uk%2Farticle%2Frick-astley-the-internet-s-oldest-joke-is-having-the-last-laugh-kwksbq757&psig=AOvVaw2ENgG_QGvmQTUzZ9zN1FJu&ust=1648216198875000&source=images&cd=vfe&ved=0CAsQjRxqFwoTCOCqt_nx3vYCFQAAAAAdAAAAABAD";
+        $newAccount->AboutMeText = "I am a music person.";
+        $newAccount->Contacts = ["Youtube: some link", "Github: Some link"];
         
         // Save the changes made to the fields.
-        $artefact->SaveChanges();
-    }
-
-    // How to get all artefacts registered to the user.
-    $artefacts = $newAccount->GetArtefacts();
-
-    // Add education...
-    $newAccount->AddEducation("A University");
-    $newAccount->AddEducation("A School");
-
-    // How to get all education institutes registered to the user.
-    $education = $newAccount->GetEducation();
-
-    // Add work experience...
-    for($i = 0; $i < 10; $i++){
-        // Create a new entry
-        $workExperience = $newAccount->AddWorkExperience("Company ".($i+1));
+        $newAccount->SaveChanges();
         
-        // Populate fields.
-        $workExperience->StartDate = ($i*2+1)."/3/2022";
-        $workExperience->EndDate = ($i*2+2)."/3/2022";
-        $workExperience->JobTitle = "Worker number ".($i+1);
-        $workExperience->Description = "I worked here for a long time. Here is a long bit of text of random length: ".str_pad("",rand(10,100),"I am a statement. ");
-
-        // Save the changes made to the fields.
-        $workExperience->SaveChanges();
+        // Add artefacts...
+        for($i = 0; $i < 5; $i++){
+            // Create a new object
+            $artefact = $newAccount->AddNewArtefact();
+            
+            // Populate fields
+            $artefact->Title = "Artefact ".($i+1);
+            $artefact->Description = "This is artefact number ".($i+1).".";
+            $artefact->ThumbnailLink = "RickRolled.webp";
+            $artefact->FileLink = "RickRolled.webp";
+            $artefact->Tags = ["Year ".$i+1, "University"];
+            
+            // Save the changes made to the fields.
+            $artefact->SaveChanges();
+        }
+        
+        // How to get all artefacts registered to the user.
+        $artefacts = $newAccount->GetArtefacts();
+        
+        // Add education...
+        $newAccount->AddEducation("A University");
+        $newAccount->AddEducation("A School");
+        
+        // How to get all education institutes registered to the user.
+        $education = $newAccount->GetEducation();
+        
+        // Add work experience...
+        for($i = 0; $i < 10; $i++){
+            // Create a new entry
+            $workExperience = $newAccount->AddWorkExperience("Company ".($i+1));
+            
+            // Populate fields.
+            $workExperience->StartDate = ($i*2+1)."/3/2022";
+            $workExperience->EndDate = ($i*2+2)."/3/2022";
+            $workExperience->JobTitle = "Worker number ".($i+1);
+            $workExperience->Description = "I worked here for a long time. Here is a long bit of text of random length: ".str_pad("",rand(10,100),"I am a statement. ");
+            
+            // Save the changes made to the fields.
+            $workExperience->SaveChanges();
+        }
+        
+        // How to get all work experiences
+        $workExperience = $newAccount->GetWorkExperience();
     }
-
-    // How to get all work experiences
-    $workExperience = $newAccount->GetWorkExperience();
 }
-?>
+    ?>

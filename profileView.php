@@ -71,8 +71,8 @@
       echo $artefacts[$x]->Description;
       echo "<br>";
       ?>
-      <a href=<?php $artefacts[$x]->FileLink ?>  download="Rick">
-        <img src=<?php $artefacts[$x]->ThumbnailLink ?> alt="Rick" width="104" height="142">
+      <a href=<?php echo $artefacts[$x]->FileLink ?>  download="Rick">
+        <img src=<?php echo $artefacts[$x]->ThumbnailLink ?> alt="Rick" width="104" height="142">
       </a>
       <?php 
       echo "<br>";
