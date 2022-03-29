@@ -1,6 +1,7 @@
 <?php
   include_once("DatabaseInterface.php");
   include_once("Session.php");
+  include_once("DatabaseClassDisplayHelper.php");
 
   StartSession();
 
@@ -9,6 +10,7 @@
   if (isset($_GET["user"])) {
     // Specified user.
     $user = GetUser($_GET["user"]);
+    // TODO: prevent a user being viewed if $user->IsPublic is false and not logged in as said user.
   } else if (IsLoggedIn()) {
     // No user was specified, so use the current one.
     $user = GetSessionUser();
@@ -23,7 +25,7 @@
 <html>
 <head>
   <link rel="stylesheet" href="style.css" />
-  <link rel="stylesheet" href="TimelineStyle.css" />
+  <link rel="stylesheet" href="DatabaseClassDisplayStyle.css" />
 </head>
 <body>
 
@@ -55,41 +57,17 @@
   <div class="undernav">
 
     <h2 id="artefacts" >Artefacts</h2>
-    <a href="#year1">Year 1</a>
-    <a href="#year2">Year 2</a>
-    <a href="#year3">Year 3</a>
-    <a href="#year4">Year 4</a>
-
-    <h3 id="year1">Year 1</h2>
-    
     <?php
     $artefacts = $user->GetArtefacts();
-    $length = count($artefacts)-1;
-    for ($x = 0; $x <= $length; $x++) {
-      echo $artefacts[$x]->Title;
-      echo "<br>";
-      echo $artefacts[$x]->Description;
-      echo "<br>";
-      ?>
-      <a href=<?php echo $artefacts[$x]->FileLink ?>  download="Rick">
-        <img src=<?php echo $artefacts[$x]->ThumbnailLink ?> alt="Rick" width="104" height="142">
-      </a>
-      <?php 
-      echo "<br>";
+    foreach($artefacts as $artefact){
+      GenerateArtefactBox($artefact);
     }
     ?>
-
-    <h3 id="year2">Year 2</h2>
-
-    <h3 id="year3">Year 3</h2>
-
-    <h3 id="year4">Year 4</h2>
-   
+    
     <h2 id="work" >Work Experience</h2>
 
     <?php
       // Generate the timeline of work experience.
-      include_once("WorkExperienceTimelineMaker.php");
       GenerateWorkExperienceTimeline($user->GetWorkExperience());
     ?>
 
