@@ -32,14 +32,12 @@
 <div class="split left">
   <div class="top">
     <img src="Donny.webp" alt="Profile Picture">
-    <h2>Name: <?=$user->FirstName;?> <?=$user->LastName;?></h2>
-    <p>University: Sheffield Hallam</p>
-    <p>Date: 2021 - Current Date</p>
-    <p>Education: Moira High School</p>
-    <p>Date: 2016-2021</p>
-    <p>Github Link: https/jameslovescoding.com</p>
-    <p>Phone Number: 07593045679</p>
-    <p>Email: c1006465@my.shu.ac.uk</p>
+
+    <h1><?=$user->FirstName;?> <?=$user->LastName;?></h2>
+    <h2>Education:</h2><p> <?php echo implode("<br>",$user->GetEducation()); ?></p>
+    <h2>Contact:</h2><p> <?php echo implode("<br>",$user->Contacts); ?></p>
+    <h2 id="aboutme">About Me</h3><p><?php echo $user->AboutMe; ?></p>
+    
   </div>
 </div>
 
@@ -63,7 +61,7 @@
       GenerateArtefactBox($artefact);
     }
     ?>
-    
+
     <h2 id="work" >Work Experience</h2>
 
     <?php
@@ -71,13 +69,6 @@
       GenerateWorkExperienceTimeline($user->GetWorkExperience());
     ?>
 
-    <h2 id="aboutme">About Me</h2>
-      <p>
-      Due to graduate in 2021, I have acquired technical knowledge and skills from my course as well as practical and business skills 
-      from my industrial year in a software company in Germany. I have used a range of languages, operating systems and development tools 
-      as well as experiencing the system development life cycle. Specialising in mobile technology, I am keen to develop as a graduate 
-      trainee in software development.
-      </p>
   </div>
 </div>
 </body>
