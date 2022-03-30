@@ -6,6 +6,7 @@
   StartSession();
 
   $user = null;
+  $editingEnabled = false;
   // Figure out which user to view
   if (isset($_GET["user"])) {
     // Specified user.
@@ -14,6 +15,7 @@
   } else if (IsLoggedIn()) {
     // No user was specified, so use the current one.
     $user = GetSessionUser();
+    $editingEnabled = true;
   } else {
     // No user to view.
     // TODO: proper error handling
@@ -58,7 +60,7 @@
     <?php
     $artefacts = $user->GetArtefacts();
     foreach($artefacts as $artefact){
-      GenerateArtefactBox($artefact);
+      GenerateArtefactBox($artefact,$editingEnabled);
     }
     ?>
 
@@ -66,7 +68,7 @@
 
     <?php
       // Generate the timeline of work experience.
-      GenerateWorkExperienceTimeline($user->GetWorkExperience());
+      GenerateWorkExperienceTimeline($user->GetWorkExperience(),$editingEnabled);
     ?>
 
   </div>
