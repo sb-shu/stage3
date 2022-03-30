@@ -25,6 +25,10 @@
     margin: 5px;
 }
 
+.workExperienceBox{
+    white-space: normal;
+}
+
 .WorkExperienceDescription{
     background-color: lightgray;
     color:black;
