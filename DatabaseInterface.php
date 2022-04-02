@@ -81,9 +81,8 @@ class PortfolioArtefact{
     /* #endregion */
 
     function GetID(){
-        return $_ID;
+        return $this->_ID;
     }
-
 }
 
 // Class that holds data about a person's past work experience.
@@ -164,14 +163,14 @@ class PortfolioWorkExperience{
     }
 
     function GetID(){
-        return $_ID;
+        return $this->_ID;
     }
 
 }
 
 // Class that holds all publicly accessable data regarding a user, including name, portfolio items, and more.
 class UserAccount{
-    private $Username; // String
+    private $_Username; // String
     public $FirstName; // String
     public $LastName; // String
     public $ProfilePictureLink; // String
@@ -215,7 +214,7 @@ class UserAccount{
         }
 
         $userObject = new UserAccount();
-        $userObject->Username = $username;
+        $userObject->_Username = $username;
         $userObject->FirstName = $result["FirstName"];
         $userObject->LastName = $result["LastName"];
         $userObject->ProfilePictureLink = $result["ProfilePictureLink"];
@@ -239,7 +238,7 @@ class UserAccount{
         IsPublic = :isPublic,
         IsAdmin = :isAdmin
         WHERE Username = :username");
-        $statement->bindParam(":username", $this->Username);
+        $statement->bindParam(":username", $this->_Username);
 
         $statement->bindParam(":firstName", $this->FirstName);
         $statement->bindParam(":lastName", $this->LastName);
@@ -268,7 +267,7 @@ class UserAccount{
         $db = new SQLite3(SQLPATH);
 
         $statement = $db->prepare("INSERT INTO UserEducationLink (Username, EducationID) VALUES (:username, :educationID)");
-        $statement->bindParam(":username", $this->Username);
+        $statement->bindParam(":username", $this->_Username);
         $statement->bindParam(":educationID", $id);
         $statement->execute();
     }
@@ -277,7 +276,7 @@ class UserAccount{
     function GetEducation(){
         $db = new SQLite3(SQLPATH);
         $statement = $db->prepare("SELECT EducationInstitutions.Name FROM UserEducationLink JOIN EducationInstitutions ON UserEducationLink.EducationID = EducationInstitutions.ID WHERE Username = :username");
-        $statement->bindParam(":username", $this->Username);
+        $statement->bindParam(":username", $this->_Username);
 
         $institutions = [];
         $count = 0;
@@ -303,14 +302,14 @@ class UserAccount{
 
         // If the institution exists, add it.
 
-        return PortfolioWorkExperience::CreateWorkExperience($this->Username, $id);
+        return PortfolioWorkExperience::CreateWorkExperience($this->_Username, $id);
     }
 
     // Returns an array of PortfolioWorkExperience objects that are linked to this user.
     function GetWorkExperience(){
         $db = new SQLite3(SQLPATH);
         $statement = $db->prepare("SELECT ID FROM PortfolioWorkExperiences WHERE Username = :username");
-        $statement->bindParam(":username", $this->Username);
+        $statement->bindParam(":username", $this->_Username);
 
         $experiences = [];
         $count = 0;
@@ -329,14 +328,14 @@ class UserAccount{
 
     // Creates a new artefact attached to this account.
     function AddNewArtefact() : PortfolioArtefact{
-        return PortfolioArtefact::CreateArtefact($this->Username);
+        return PortfolioArtefact::CreateArtefact($this->_Username);
     }
 
     // Returns all artefacts attached to this account.
     function GetArtefacts(){
         $db = new SQLite3(SQLPATH);
         $statement = $db->prepare("SELECT ID FROM PortfolioArtefacts WHERE Username = :username");
-        $statement->bindParam(":username", $this->Username);
+        $statement->bindParam(":username", $this->_Username);
 
         $artefacts = [];
         $count = 0;
@@ -352,9 +351,8 @@ class UserAccount{
     /* #endregion */
 
     function GetUsername(){
-        return $Username;
+        return $this->_Username;
     }
-
 }
 
 /* #endregion */
@@ -400,15 +398,16 @@ function UserComparePassword($username, $password):bool{
 function GetRandomPublicAccounts($count = 1) : array {
     $db = new SQLite3(SQLPATH);
 
-    $statement = $db->prepare("SELECT Username FROM UserAccounts WHERE IsPublic = 'true' ORDER BY RANDOM() LIMIT :count");
-    $statement->bindParam(':count', $count);
+
+    $statement = $db->prepare("SELECT Username FROM UserAccounts WHERE IsPublic = 1 ORDER BY RANDOM() LIMIT :count");
+    $statement->bindParam(":count", $count);
     $result = $statement->execute();
 
     $users = [];
     while ($user = $result->fetchArray()) {
         $users[$user["Username"]] = GetUser($user["Username"]);
     }
-
+    
     return $users;
 }
 
@@ -538,63 +537,69 @@ function InitializeDatabase(){
 InitializeDatabase();
 
 // Create a testing account.
-$newAccount = CreateUser("testuser", "pass");
-$newAccount = CreateUser("testuser1", "pass");
-$newAccount = CreateUser("testuser2", "pass");
-$newAccount = CreateUser("testuser3", "pass");
-if($newAccount){
-    // Set new account details...
-    $newAccount->FirstName = "Test";
-    $newAccount->LastName = "Testington";
-    $newAccount->ProfilePictureLink = "https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.thetimes.co.uk%2Farticle%2Frick-astley-the-internet-s-oldest-joke-is-having-the-last-laugh-kwksbq757&psig=AOvVaw2ENgG_QGvmQTUzZ9zN1FJu&ust=1648216198875000&source=images&cd=vfe&ved=0CAsQjRxqFwoTCOCqt_nx3vYCFQAAAAAdAAAAABAD";
-    $newAccount->AboutMeText = "I am a music person.";
-    $newAccount->Contacts = ["Youtube: some link", "Github: Some link"];
-
-    // Save the changes made to the fields.
-    $newAccount->SaveChanges();
-
-    // Add artefacts...
-    for($i = 0; $i < 5; $i++){
-        // Create a new object
-        $artefact = $newAccount->AddNewArtefact();
-        
-        // Populate fields
-        $artefact->Title = "Artefact ".($i+1);
-        $artefact->Description = "This is artefact number ".($i+1).".";
-        $artefact->ThumbnailLink = "RickRolled.webp";
-        $artefact->FileLink = "RickRolled.webp";
-        $artefact->Tags = ["Year ".$i+1, "University"];
+for($accountNumber = 0; $accountNumber < 7; $accountNumber++){
+    if($accountNumber == 0){
+        $newAccount = CreateUser("testuser", "pass");
+    }
+    else{
+        $newAccount = CreateUser("AnotherUser".$accountNumber, "pass");
+    }
+    if($newAccount){
+        // Set new account details...
+        $newAccount->FirstName = "Test";
+        $newAccount->LastName = "Testington";
+        $newAccount->ProfilePictureLink = "https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.thetimes.co.uk%2Farticle%2Frick-astley-the-internet-s-oldest-joke-is-having-the-last-laugh-kwksbq757&psig=AOvVaw2ENgG_QGvmQTUzZ9zN1FJu&ust=1648216198875000&source=images&cd=vfe&ved=0CAsQjRxqFwoTCOCqt_nx3vYCFQAAAAAdAAAAABAD";
+        $newAccount->AboutMeText = "I am a music person.";
+        $newAccount->Contacts = ["Youtube: some link", "Github: Some link"];
+        $newAccount->IsAdmin = $accountNumber % 5 == 4;
+        $newAccount->IsPublic = $accountNumber % 2 == 1;
         
         // Save the changes made to the fields.
-        $artefact->SaveChanges();
-    }
-
-    // How to get all artefacts registered to the user.
-    $artefacts = $newAccount->GetArtefacts();
-
-    // Add education...
-    $newAccount->AddEducation("A University");
-    $newAccount->AddEducation("A School");
-
-    // How to get all education institutes registered to the user.
-    $education = $newAccount->GetEducation();
-
-    // Add work experience...
-    for($i = 0; $i < 5; $i++){
-        // Create a new entry
-        $workExperience = $newAccount->AddWorkExperience("Company ".($i+1));
+        $newAccount->SaveChanges();
         
-        // Populate fields.
-        $workExperience->StartDate = ($i*2+1)."/3/2022";
-        $workExperience->EndDate = ($i*2+2)."/3/2022";
-        $workExperience->JobTitle = "Worker number ".($i+1);
-        $workExperience->Description = "I worked here for a long time. Here is a long bit of text of random length: ".str_pad("",rand(10,100),"I am a statement. ");
-
-        // Save the changes made to the fields.
-        $workExperience->SaveChanges();
+        // Add artefacts...
+        for($i = 0; $i < 5; $i++){
+            // Create a new object
+            $artefact = $newAccount->AddNewArtefact();
+            
+            // Populate fields
+            $artefact->Title = "Artefact ".($i+1);
+            $artefact->Description = "This is artefact number ".($i+1).".";
+            $artefact->ThumbnailLink = "RickRolled.webp";
+            $artefact->FileLink = "RickRolled.webp";
+            $artefact->Tags = ["Year ".$i+1, "University"];
+            
+            // Save the changes made to the fields.
+            $artefact->SaveChanges();
+        }
+        
+        // How to get all artefacts registered to the user.
+        $artefacts = $newAccount->GetArtefacts();
+        
+        // Add education...
+        $newAccount->AddEducation("A University");
+        $newAccount->AddEducation("A School");
+        
+        // How to get all education institutes registered to the user.
+        $education = $newAccount->GetEducation();
+        
+        // Add work experience...
+        for($i = 0; $i < 10; $i++){
+            // Create a new entry
+            $workExperience = $newAccount->AddWorkExperience("Company ".($i+1));
+            
+            // Populate fields.
+            $workExperience->StartDate = ($i*2+1)."/3/2022";
+            $workExperience->EndDate = ($i*2+2)."/3/2022";
+            $workExperience->JobTitle = "Worker number ".($i+1);
+            $workExperience->Description = "I worked here for a long time. Here is a long bit of text of random length: ".str_pad("",rand(10,100),"I am a statement. ");
+            
+            // Save the changes made to the fields.
+            $workExperience->SaveChanges();
+        }
+        
+        // How to get all work experiences
+        $workExperience = $newAccount->GetWorkExperience();
     }
-
-    // How to get all work experiences
-    $workExperience = $newAccount->GetWorkExperience();
 }
-?>
+    ?>

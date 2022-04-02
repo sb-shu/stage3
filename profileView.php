@@ -31,53 +31,47 @@
 ?>
 
 <html>
-<head>
-  <link rel="stylesheet" href="style.css" />
-  <link rel="stylesheet" href="DatabaseClassDisplayStyle.css" />
-</head>
-<body>
+  <head>
+    <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="DatabaseClassDisplayStyle.css" />
+  </head>
+  <body>
+    <div class="split left">
+      <div class="top">
+        <img src="Donny.webp" alt="Profile Picture">
+        <h1><?=$user->FirstName;?> <?=$user->LastName;?></h2>
+        <h2>Education:</h2><p> <?php echo implode("<br>",$user->GetEducation()); ?></p>
+        <h2>Contact:</h2><p> <?php echo implode("<br>",$user->Contacts); ?></p>
+        <h2 id="aboutme">About Me</h3><p><?php echo $user->AboutMe; ?></p>
+        
+      </div>
+    </div>
 
-<div class="split left">
-  <div class="top">
-    <img src="Donny.webp" alt="Profile Picture">
+    <div class="split right">
+      <div class="topnav">
+        <a class="active" href="#artefacts">Artefacts</a>
+        <a href="#work">Work</a>
+        <a href="#aboutme">About Me</a>
+      </div>
 
-    <h1><?=$user->FirstName;?> <?=$user->LastName;?></h2>
-    <h2>Education:</h2><p> <?php echo implode("<br>",$user->GetEducation()); ?></p>
-    <h2>Contact:</h2><p> <?php echo implode("<br>",$user->Contacts); ?></p>
-    <h2 id="aboutme">About Me</h3><p><?php echo $user->AboutMe; ?></p>
-    
-  </div>
-</div>
+      <div class="undernav">
 
+        <h2 id="artefacts" >Artefacts</h2>
+        <?php
+        $artefacts = $user->GetArtefacts();
+        foreach($artefacts as $artefact){
+          GenerateArtefactBox($artefact,$editingEnabled);
+        }
+        ?>
 
+        <h2 id="work" >Work Experience</h2>
 
+        <?php
+          // Generate the timeline of work experience.
+          GenerateWorkExperienceTimeline($user->GetWorkExperience(),$editingEnabled);
+        ?>
 
-
-<div class="split right">
-  <div class="topnav">
-    <a class="active" href="#artefacts">Artefacts</a>
-    <a href="#work">Work</a>
-    <a href="#aboutme">About Me</a>
-  </div>
-
-  <div class="undernav">
-
-    <h2 id="artefacts" >Artefacts</h2>
-    <?php
-    $artefacts = $user->GetArtefacts();
-    foreach($artefacts as $artefact){
-      GenerateArtefactBox($artefact,$editingEnabled);
-    }
-    ?>
-
-    <h2 id="work" >Work Experience</h2>
-
-    <?php
-      // Generate the timeline of work experience.
-      GenerateWorkExperienceTimeline($user->GetWorkExperience(),$editingEnabled);
-    ?>
-
-  </div>
-</div>
-</body>
+      </div>
+    </div>
+  </body>
 </html>
