@@ -10,7 +10,7 @@
                 <p><?php echo $portfolioWorkExperience->StartDate." - ".$portfolioWorkExperience->EndDate; ?></p>
                 <p class="WorkExperienceDescription"><?php echo $portfolioWorkExperience->Description; ?></p>
             <?php } else { ?>
-                <form method="POST">
+                <form method="POST" action="profileEdit.php">
                     <input class="DatabaseClassBoxTitle" value=<?php echo $portfolioWorkExperience->JobTitle; ?> />
                     <input class="WorkExperienceInstitution" value=<?php echo $portfolioWorkExperience->GetWorkInstitutionName(); ?> />
                     <input type="date" value=<?php echo $portfolioWorkExperience->StartDate; ?> />
@@ -50,7 +50,7 @@
                     <img class="ArtefactBoxThumbnail" src=<?php echo $portfolioArtefact->ThumbnailLink; ?> />
                 </a>
             <?php } else { ?>
-                <form>
+                <form method="POST" action="profileEdit.php">
                     <input type="text" class="DatabaseClassBoxTitle" value=<?php echo $portfolioArtefact->Title; ?> />
                     <input type="text" value=<?php echo $portfolioArtefact->FileLink; ?> />
                     <input type="text" value=<?php echo $portfolioArtefact->ThumbnailLink; ?> />

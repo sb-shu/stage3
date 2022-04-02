@@ -3,12 +3,6 @@
   include_once("Session.php");
   include_once("DatabaseClassDisplayHelper.php");
 
-  // Posting profile changes
-  if(isset($_POST["submit"])){
-    var_dump($_POST);
-    die;
-  }
-
   StartSession();
 
   $user = null;
