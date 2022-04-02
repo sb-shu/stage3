@@ -79,6 +79,11 @@ class PortfolioArtefact{
     }
 
     /* #endregion */
+
+    function GetID(){
+        return $_ID;
+    }
+
 }
 
 // Class that holds data about a person's past work experience.
@@ -156,6 +161,10 @@ class PortfolioWorkExperience{
         $statement = $db->prepare("SELECT Name FROM WorkInstitutions WHERE ID = :id");
         $statement->bindParam(":id", $this->_WorkInstitutionID);
         return $statement->execute()->fetchArray(SQLITE3_ASSOC)["Name"];
+    }
+
+    function GetID(){
+        return $_ID;
     }
 
 }
@@ -341,6 +350,11 @@ class UserAccount{
     }
 
     /* #endregion */
+
+    function GetUsername(){
+        return $Username;
+    }
+
 }
 
 /* #endregion */
