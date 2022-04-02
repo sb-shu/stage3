@@ -10,7 +10,7 @@
                 <p><?php echo $portfolioWorkExperience->StartDate." - ".$portfolioWorkExperience->EndDate; ?></p>
                 <p class="WorkExperienceDescription"><?php echo $portfolioWorkExperience->Description; ?></p>
             <?php } else { ?>
-                <form>
+                <form method="POST">
                     <input class="DatabaseClassBoxTitle" value=<?php echo $portfolioWorkExperience->JobTitle; ?> />
                     <input class="WorkExperienceInstitution" value=<?php echo $portfolioWorkExperience->GetWorkInstitutionName(); ?> />
                     <input type="date" value=<?php echo $portfolioWorkExperience->StartDate; ?> />
@@ -51,9 +51,9 @@
                 </a>
             <?php } else { ?>
                 <form>
-                    <input class="DatabaseClassBoxTitle" value=<?php echo $portfolioArtefact->Title; ?> />
-                    <input value=<?php echo $portfolioArtefact->FileLink; ?> />
-                    <input value=<?php echo $portfolioArtefact->ThumbnailLink; ?> />
+                    <input type="text" class="DatabaseClassBoxTitle" value=<?php echo $portfolioArtefact->Title; ?> />
+                    <input type="text" value=<?php echo $portfolioArtefact->FileLink; ?> />
+                    <input type="text" value=<?php echo $portfolioArtefact->ThumbnailLink; ?> />
                     <input type="submit" value="Save Changes" />
                     <input type="submit" value="Delete" />
                 </form>
