@@ -138,3 +138,31 @@ left: 30;
   top: 0;
   z-index: 10;
 }
+
+.register {
+  background-color: #EEEEEE;
+  color: #000000;
+  padding: 15px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  -ms-transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%);
+}
+
+.register h1 {
+  margin-top: 0;
+}
+
+.register div {
+  padding-bottom: 3px;
+}
+
+.register label {
+  width: 100px;
+  display: inline-block;
+}
+
+.register input {
+  width: 200px;
+}
