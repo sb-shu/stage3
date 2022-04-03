@@ -36,7 +36,7 @@
         <h1><?=$user->FirstName;?> <?=$user->LastName;?></h2>
         <h2>Education:</h2><p> <?php echo implode("<br>",$user->GetEducation()); ?></p>
         <h2>Contact:</h2><p> <?php echo implode("<br>",$user->Contacts); ?></p>
-        <h2 id="aboutme">About Me</h3><p><?php echo $user->AboutMe; ?></p>
+        
         
       </div>
     </div>
@@ -64,7 +64,7 @@
           // Generate the timeline of work experience.
           GenerateWorkExperienceTimeline($user->GetWorkExperience(),$editingEnabled);
         ?>
-
+        <h2 id="aboutme">About Me</h3><p><?php echo $user->AboutMe; ?></p>
       </div>
     </div>
   </body>

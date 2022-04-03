@@ -26,7 +26,7 @@
             <?php endif; ?>
         </div>
         <div id="home-profiles">
-            <div class="title">Public Profiles</div>
+            <div class="title">Public Portfolios</div>
             <?php foreach ($users as $username => $user): ?>
                 <div class="item">
                     <a href="profileView.php?user=<?=$username;?>" class="link"></a>
