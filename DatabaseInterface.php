@@ -116,7 +116,7 @@ class PortfolioWorkExperience{
         $statement = $db->prepare("SELECT StartDate, EndDate, WorkInstitutionID, JobTitle, Description FROM PortfolioWorkExperiences WHERE ID = :id");
         $statement->bindParam(":id", $workExperienceID);
         $result = $statement->execute()->fetchArray(SQLITE3_ASSOC);
-    
+
         // If query returns empty, return.
         if (!$result) {
             return null;

@@ -11,13 +11,14 @@
                 <p class="WorkExperienceDescription"><?php echo $portfolioWorkExperience->Description; ?></p>
             <?php } else { ?>
                 <form method="POST" action="profileEdit.php">
-                    <input class="DatabaseClassBoxTitle" value=<?php echo $portfolioWorkExperience->JobTitle; ?> />
-                    <input class="WorkExperienceInstitution" value=<?php echo $portfolioWorkExperience->GetWorkInstitutionName(); ?> />
-                    <input type="date" value=<?php echo $portfolioWorkExperience->StartDate; ?> />
-                    <input type="date" value=<?php echo $portfolioWorkExperience->EndDate; ?> />
-                    <input class="WorkExperienceDescription" value=<?php echo $portfolioWorkExperience->Description; ?> />
-                    <input type="submit" value="Save Changes" />
-                    <input type="submit" value="Delete" />
+                    <input name="JobTitle" class="DatabaseClassBoxTitle" value="<?php echo $portfolioWorkExperience->JobTitle; ?>" />
+                    <input name="WorkInstitution" class="WorkExperienceInstitution" value="<?php echo $portfolioWorkExperience->GetWorkInstitutionName(); ?>" />
+                    <!-- <input name="StartDate" type="date" value="<?php echo $portfolioWorkExperience->StartDate; ?>" />
+                    <input name="EndDate" type="date" value="<?php echo $portfolioWorkExperience->EndDate; ?>" /> -->
+                    <input name="Description" class="WorkExperienceDescription" value="<?php echo $portfolioWorkExperience->Description; ?>" />
+                    <input name="ID" type="hidden" value="<?php echo $portfolioWorkExperience->GetID(); ?>" />
+                    <input name="WorkExperienceSave" type="submit" value="Save Changes" />
+                    <!-- <input name="WorkExperienceDelete" type="submit" value="Delete" /> -->
                 </form>
             <?php } ?>
         </div>
@@ -51,11 +52,12 @@
                 </a>
             <?php } else { ?>
                 <form method="POST" action="profileEdit.php">
-                    <input type="text" class="DatabaseClassBoxTitle" value=<?php echo $portfolioArtefact->Title; ?> />
-                    <input type="text" value=<?php echo $portfolioArtefact->FileLink; ?> />
-                    <input type="text" value=<?php echo $portfolioArtefact->ThumbnailLink; ?> />
-                    <input type="submit" value="Save Changes" />
-                    <input type="submit" value="Delete" />
+                    <input name="Title" type="text" class="DatabaseClassBoxTitle" value="<?php echo $portfolioArtefact->Title; ?>" />
+                    <input name="FileLink" type="text" value="<?php echo $portfolioArtefact->FileLink; ?>" />
+                    <input name="ThumbnailLink" type="text" value="<?php echo $portfolioArtefact->ThumbnailLink; ?>" />
+                    <input name="ID" type="hidden" value="<?php echo $portfolioArtefact->GetID(); ?>" />
+                    <input name="ArtefactSave" type="submit" value="Save Changes" />
+                    <!-- <input name="ArtefactDelete" type="submit" value="Delete" /> -->
                 </form>
             <?php } ?>
         </div>
