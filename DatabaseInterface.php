@@ -549,8 +549,17 @@ for($accountNumber = 0; $accountNumber < 7; $accountNumber++){
         $newAccount->FirstName = "Test";
         $newAccount->LastName = "Testington";
         $newAccount->ProfilePictureLink = "https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.thetimes.co.uk%2Farticle%2Frick-astley-the-internet-s-oldest-joke-is-having-the-last-laugh-kwksbq757&psig=AOvVaw2ENgG_QGvmQTUzZ9zN1FJu&ust=1648216198875000&source=images&cd=vfe&ved=0CAsQjRxqFwoTCOCqt_nx3vYCFQAAAAAdAAAAABAD";
-        $newAccount->AboutMeText = "I am a music person.";
-        $newAccount->Contacts = ["Youtube: some link", "Github: Some link"];
+        $newAccount->AboutMeText = "Madison Blackstone is a director of brand marketing, with experience managing global teams and multi-million-dollar campaigns.
+        Her background in brand strategy, visual design, and account management inform her mindful but competitive approach. Madison is fueled by her passion for 
+        understanding the nuances of cross-cultural advertising. She considers herself a ‘forever student,’ eager to both build on her academic foundations in psychology 
+        and sociology and stay in tune with the latest digital marketing strategies through continued coursework.
+        Madison's hunger for knowledge and determination to turn information into action has contributed to her most recent success at Rockwell Group, 
+        where she led international, award-winning campaigns for heavy-hitting brands, such as Puma, Gucci, and Rolex. Meanwhile, she vastly improved the 
+        productivity of her team by implementing strategic project management methods and ensuring a work-life balance for her department.
+        Madison believes mindfulness in the workplace is key to success - a tenet she lives out through her interests in yoga, meditation, gardening, and painting.
+        Madison is currently working as a freelance marketing director and is always interested in a challenge. Reach out to madisonblackstone@gmail.com to connect!";
+
+        $newAccount->Contacts = ["Youtube: https://www.youtube.com/c/sheffieldhallamuni", "Github: https://www.github.com/droberts/work"];
         $newAccount->IsAdmin = $accountNumber % 5 == 4;
         $newAccount->IsPublic = $accountNumber % 2 == 1;
         
@@ -558,7 +567,7 @@ for($accountNumber = 0; $accountNumber < 7; $accountNumber++){
         $newAccount->SaveChanges();
         
         // Add artefacts...
-        for($i = 0; $i < 5; $i++){
+        for($i = 0; $i < 50; $i++){
             // Create a new object
             $artefact = $newAccount->AddNewArtefact();
             
@@ -577,8 +586,8 @@ for($accountNumber = 0; $accountNumber < 7; $accountNumber++){
         $artefacts = $newAccount->GetArtefacts();
         
         // Add education...
-        $newAccount->AddEducation("A University");
-        $newAccount->AddEducation("A School");
+        $newAccount->AddEducation("Sheffield Hallam University");
+        $newAccount->AddEducation("Moira High School");
         
         // How to get all education institutes registered to the user.
         $education = $newAccount->GetEducation();

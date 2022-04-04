@@ -6,10 +6,10 @@ body {
 
 .topnav {
   background-color:  rgb(80, 80, 80);
-
+  overflow: hidden;
   position: fixed;
   top: 0px;
-  left: 28%;
+  width: 72%;
   height: 6%;
   
 }
@@ -19,10 +19,9 @@ body {
   float: left;
   color: #f2f2f2;
   text-align: center;
-  padding: 14px 16px;
   text-decoration: none;
   font-size: 17px;
-  
+  width: 30%;
   
 }
 
