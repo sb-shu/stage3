@@ -11,11 +11,13 @@
                 <p class="WorkExperienceDescription"><?php echo $portfolioWorkExperience->Description; ?></p>
             <?php } else { ?>
                 <form method="POST" action="profileEdit.php">
-                    <input name="JobTitle" class="DatabaseClassBoxTitle" value="<?php echo $portfolioWorkExperience->JobTitle; ?>" />
+                    <label>Job Title</label><br>
+                    <input name="JobTitle" class="DatabaseClassBoxTitle" value="<?php echo $portfolioWorkExperience->JobTitle; ?>" /><br>
                     <!-- <input name="WorkInstitution" class="WorkExperienceInstitution" value="<?php echo $portfolioWorkExperience->GetWorkInstitutionName(); ?>" />
                     <input name="StartDate" type="date" value="<?php echo $portfolioWorkExperience->StartDate; ?>" />
                     <input name="EndDate" type="date" value="<?php echo $portfolioWorkExperience->EndDate; ?>" /> -->
-                    <input name="Description" class="WorkExperienceDescription" value="<?php echo $portfolioWorkExperience->Description; ?>" />
+                    <label>Description</label><br>
+                    <input name="Description" class="WorkExperienceDescription" value="<?php echo $portfolioWorkExperience->Description; ?>" /><br>
                     <input name="ID" type="hidden" value="<?php echo $portfolioWorkExperience->GetID(); ?>" />
                     <input name="WorkExperienceSave" type="submit" value="Save Changes" />
                     <!-- <input name="WorkExperienceDelete" type="submit" value="Delete" /> -->
@@ -52,9 +54,12 @@
                 </a>
             <?php } else { ?>
                 <form method="POST" action="profileEdit.php">
-                    <input name="Title" type="text" class="DatabaseClassBoxTitle" value="<?php echo $portfolioArtefact->Title; ?>" />
-                    <input name="FileLink" type="text" value="<?php echo $portfolioArtefact->FileLink; ?>" />
-                    <input name="ThumbnailLink" type="text" value="<?php echo $portfolioArtefact->ThumbnailLink; ?>" />
+                    <label>Title</label><br>
+                    <input name="Title" type="text" class="DatabaseClassBoxTitle" value="<?php echo $portfolioArtefact->Title; ?>" /><br>
+                    <label>File Link</label><br>
+                    <input name="FileLink" type="text" value="<?php echo $portfolioArtefact->FileLink; ?>" /><br>
+                    <label>Thumbnail Link</label><br>
+                    <input name="ThumbnailLink" type="text" value="<?php echo $portfolioArtefact->ThumbnailLink; ?>" /><br>
                     <input name="ID" type="hidden" value="<?php echo $portfolioArtefact->GetID(); ?>" />
                     <input name="ArtefactSave" type="submit" value="Save Changes" />
                     <!-- <input name="ArtefactDelete" type="submit" value="Delete" /> -->
