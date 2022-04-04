@@ -31,32 +31,37 @@
 
 <html>
     <head>
+        <link rel="stylesheet" href="style.css" />
     </head>
-    <body>
+    <body style="background-color: #222222;">
         <?php if (IsLoggedIn()): ?>
             You are already logged in!
         <?php else: ?>
-            <form action="" method="POST">
-                <div>
-                    <label for="username">Username</label>
-                    <input type="text" name="username" id="username" required />
-                </div>
-                <div>
-                    <label for="firstName">First name</label>
-                    <input type="text" name="firstName" id="firstName" required />
-                </div>
-                <div>
-                    <label for="lastName">Last name</label>
-                    <input type="text" name="lastName" id="lastName" required />
-                </div>
-                <div>
-                    <label for="password">Password</label>
-                    <input type="password" name="password" id="password" required />
-                </div>
-                <div>
-                    <button type="submit">Log in</button>
-                </div>
-            </form>
+            <div class="register">
+                <h1>Register</h1>
+                <form action="" method="POST">
+                    <div>
+                        <label for="username">Username</label>
+                        <input type="text" name="username" id="username" required />
+                    </div>
+                    <div>
+                        <label for="firstName">First name</label>
+                        <input type="text" name="firstName" id="firstName" required />
+                    </div>
+                    <div>
+                        <label for="lastName">Last name</label>
+                        <input type="text" name="lastName" id="lastName" required />
+                    </div>
+                    <div>
+                        <label for="password">Password</label>
+                        <input type="password" name="password" id="password" required />
+                    </div>
+                    <div>
+                        <a href="index.php" style="float:left">Back home</a>
+                        <button type="submit" style="float:right">Create account</button>
+                    </div>
+                </form>
+            </div>
         <?php endif; ?>
     </body>
 </html>
