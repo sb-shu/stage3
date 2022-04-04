@@ -13,9 +13,9 @@
                 <form method="POST" action="profileEdit.php">
                     <label>Job Title</label><br>
                     <input name="JobTitle" class="DatabaseClassBoxTitle" value="<?php echo $portfolioWorkExperience->JobTitle; ?>" /><br>
-                    <!-- <input name="WorkInstitution" class="WorkExperienceInstitution" value="<?php echo $portfolioWorkExperience->GetWorkInstitutionName(); ?>" />
+                    <input name="WorkInstitution" class="WorkExperienceInstitution" value="<?php echo $portfolioWorkExperience->GetWorkInstitutionName(); ?>" />
                     <input name="StartDate" type="date" value="<?php echo $portfolioWorkExperience->StartDate; ?>" />
-                    <input name="EndDate" type="date" value="<?php echo $portfolioWorkExperience->EndDate; ?>" /> -->
+                    <input name="EndDate" type="date" value="<?php echo $portfolioWorkExperience->EndDate; ?>" />
                     <label>Description</label><br>
                     <input name="Description" class="WorkExperienceDescription" value="<?php echo $portfolioWorkExperience->Description; ?>" /><br>
                     <input name="ID" type="hidden" value="<?php echo $portfolioWorkExperience->GetID(); ?>" />
@@ -56,10 +56,12 @@
                 <form method="POST" action="profileEdit.php">
                     <label>Title</label><br>
                     <input name="Title" type="text" class="DatabaseClassBoxTitle" value="<?php echo $portfolioArtefact->Title; ?>" /><br>
-                    <label>File Link</label><br>
-                    <input name="FileLink" type="text" value="<?php echo $portfolioArtefact->FileLink; ?>" /><br>
-                    <label>Thumbnail Link</label><br>
-                    <input name="ThumbnailLink" type="text" value="<?php echo $portfolioArtefact->ThumbnailLink; ?>" /><br>
+                    <label>Thumbnail</label><br>
+                    <img class="ArtefactBoxThumbnail" src="<?php echo $portfolioArtefact->ThumbnailLink; ?>" /><br>
+                    <input name="Thumbnail" type="file" value="<?php echo $portfolioArtefact->ThumbnailLink; ?>" /><br>
+                    <label>File</label><br>
+                    <a href="<?php echo $portfolioArtefact->FileLink ?>">Current file</a><br>
+                    <input name="File" type="file" value="<?php echo $portfolioArtefact->FileLink; ?>" /><br>
                     <input name="ID" type="hidden" value="<?php echo $portfolioArtefact->GetID(); ?>" />
                     <input name="ArtefactSave" type="submit" value="Save Changes" />
                     <!-- <input name="ArtefactDelete" type="submit" value="Delete" /> -->

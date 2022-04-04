@@ -598,8 +598,8 @@ for($accountNumber = 0; $accountNumber < 7; $accountNumber++){
             $workExperience = $newAccount->AddWorkExperience("Company ".($i+1));
             
             // Populate fields.
-            $workExperience->StartDate = ($i*2+1)."/3/2022";
-            $workExperience->EndDate = ($i*2+2)."/3/2022";
+            $workExperience->StartDate = "2022-05-".str_pad($i*2+1,2,"0",STR_PAD_LEFT);
+            $workExperience->EndDate = "2022-05-".str_pad($i*2+2,2,"0",STR_PAD_LEFT);
             $workExperience->JobTitle = "Worker number ".($i+1);
             $workExperience->Description = "I worked here for a long time. Here is a long bit of text of random length: ".str_pad("",rand(10,100),"I am a statement. ");
             
