@@ -12,8 +12,8 @@
             <?php } else { ?>
                 <form method="POST" action="profileEdit.php">
                     <input name="JobTitle" class="DatabaseClassBoxTitle" value="<?php echo $portfolioWorkExperience->JobTitle; ?>" />
-                    <input name="WorkInstitution" class="WorkExperienceInstitution" value="<?php echo $portfolioWorkExperience->GetWorkInstitutionName(); ?>" />
-                    <!-- <input name="StartDate" type="date" value="<?php echo $portfolioWorkExperience->StartDate; ?>" />
+                    <!-- <input name="WorkInstitution" class="WorkExperienceInstitution" value="<?php echo $portfolioWorkExperience->GetWorkInstitutionName(); ?>" />
+                    <input name="StartDate" type="date" value="<?php echo $portfolioWorkExperience->StartDate; ?>" />
                     <input name="EndDate" type="date" value="<?php echo $portfolioWorkExperience->EndDate; ?>" /> -->
                     <input name="Description" class="WorkExperienceDescription" value="<?php echo $portfolioWorkExperience->Description; ?>" />
                     <input name="ID" type="hidden" value="<?php echo $portfolioWorkExperience->GetID(); ?>" />
