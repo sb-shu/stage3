@@ -576,7 +576,7 @@ for($accountNumber = 0; $accountNumber < 7; $accountNumber++){
             $artefact->Description = "This is artefact number ".($i+1).".";
             $artefact->ThumbnailLink = "RickRolled.webp";
             $artefact->FileLink = "RickRolled.webp";
-            $artefact->Tags = ["Year ".$i+1, "University"];
+            $artefact->Tags = ["Year ".(($i%5)+1), "University"];
             
             // Save the changes made to the fields.
             $artefact->SaveChanges();

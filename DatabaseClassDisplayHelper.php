@@ -13,9 +13,12 @@
                 <form method="POST" action="profileEdit.php">
                     <label>Job Title</label><br>
                     <input name="JobTitle" class="DatabaseClassBoxTitle" value="<?php echo $portfolioWorkExperience->JobTitle; ?>" /><br>
-                    <input name="WorkInstitution" class="WorkExperienceInstitution" value="<?php echo $portfolioWorkExperience->GetWorkInstitutionName(); ?>" />
+                    <label>Institution</label><br>
+                    <input name="WorkInstitution" class="WorkExperienceInstitution" value="<?php echo $portfolioWorkExperience->GetWorkInstitutionName(); ?>" /><br>
+                    <label>Start Date</label>
                     <input name="StartDate" type="date" value="<?php echo $portfolioWorkExperience->StartDate; ?>" />
-                    <input name="EndDate" type="date" value="<?php echo $portfolioWorkExperience->EndDate; ?>" />
+                    <label>End Date</label>
+                    <input name="EndDate" type="date" value="<?php echo $portfolioWorkExperience->EndDate; ?>" /><br>
                     <label>Description</label><br>
                     <input name="Description" class="WorkExperienceDescription" value="<?php echo $portfolioWorkExperience->Description; ?>" /><br>
                     <input name="ID" type="hidden" value="<?php echo $portfolioWorkExperience->GetID(); ?>" />
